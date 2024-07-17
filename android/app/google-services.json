@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "152413743024",
+    "project_id": "fingerfy-ac6af",
+    "storage_bucket": "fingerfy-ac6af.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152413743024:android:918c0f450a17c00f965875",
+        "android_client_info": {
+          "package_name": "com.example.fingerfy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAksRKhSswNxqN1I6R2U0TBgnz2zyWEurI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152413743024:android:76f273fd205448ea965875",
+        "android_client_info": {
+          "package_name": "io.andreealavric.fingerfy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAksRKhSswNxqN1I6R2U0TBgnz2zyWEurI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
