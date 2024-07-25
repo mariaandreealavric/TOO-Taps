@@ -29,3 +29,23 @@ plugins {
 
 rootProject.name = 'fingerfy'
 include ":app"
+
+def loadLocalProperties() {
+    def propertiesFile = rootDir.toPath().resolve('local.properties').toFile()
+    if (propertiesFile.exists()) {
+        def properties = new Properties()
+        propertiesFile.withInputStream { properties.load(it) }
+        return properties
+    } else {
+        throw new IllegalStateException("local.properties file not found")
+    }
+}
+
+def localProperties = loadLocalProperties()
+
+def flutterSdkPath = localProperties.getProperty('flutter.sdk')
+if (flutterSdkPath == null) {
+    throw new IllegalStateException("flutter.sdk not set in local.properties")
+}
+
+includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
