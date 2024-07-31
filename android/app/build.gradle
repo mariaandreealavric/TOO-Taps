@@ -8,7 +8,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'com.github.ben-manes.versions' version '0.39.0'
     id 'com.google.firebase.crashlytics'
-    id 'com.google.firebase.firebase-perf'
+    //id 'com.google.firebase.firebase-perf'//
     id 'dev.flutter.flutter-gradle-plugin'
 }
 
@@ -82,7 +82,7 @@ android {
 
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.1.2')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.0"
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'androidx.annotation:annotation:1.8.1'
@@ -92,7 +92,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
     implementation 'androidx.activity:activity-ktx:1.9.1'
     implementation 'androidx.core:core-ktx:1.13.1'
-    implementation "org.jetbrains.kotlinx:kotlinx-parcelize-runtime:1.1.0"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 }
 

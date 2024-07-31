@@ -49,3 +49,4 @@ if (flutterSdkPath == null) {
 }
 
 includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+include ':app'
