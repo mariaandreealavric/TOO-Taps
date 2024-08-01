@@ -201,6 +201,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: GestureDetector(
         onTap: () {
+          // Directly navigate to '/imageList' when any part of the page is tapped
           Navigator.pushNamed(context, '/imageList');
         },
         child: Container(
@@ -224,23 +225,20 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/signup');
+                        Navigator.pushNamed(context, '/imageList'); // Bypass signup
                       },
                       child: const Text('Registrati'),
                     ),
                     const SizedBox(width: 20),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/login');
+                        Navigator.pushNamed(context, '/imageList'); // Bypass login
                       },
                       child: const Text('Accedi'),
                     ),
@@ -254,3 +252,4 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
