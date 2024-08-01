@@ -8,7 +8,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'com.github.ben-manes.versions' version '0.39.0'
     id 'com.google.firebase.crashlytics'
-    //id 'com.google.firebase.firebase-perf'//
+    //id 'com.google.firebase.firebase-perf' // Uncomment if needed
     id 'dev.flutter.flutter-gradle-plugin'
 }
 
@@ -24,8 +24,6 @@ def flutterSdkPath = localProperties.getProperty('flutter.sdk') ?: System.getenv
 if (flutterSdkPath == null) {
     throw new IllegalStateException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
-
-
 
 android {
     namespace = "io.andreealavric.fingerfy"
@@ -92,6 +90,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
     implementation 'androidx.activity:activity-ktx:1.9.1'
     implementation 'androidx.core:core-ktx:1.13.1'
+    implementation "org.jetbrains.kotlinx:kotlinx-parcelize-runtime:1.1.0"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 }
 
