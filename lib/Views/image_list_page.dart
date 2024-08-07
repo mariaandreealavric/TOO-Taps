@@ -61,12 +61,19 @@ class ImageListPageState extends State<ImageListPage> with SingleTickerProviderS
   @override
   Widget build(BuildContext context) {
     _logger.i('ImageListPage: Building with userID ${widget.userID}');
-    final themeProvider = context.watch<ThemeProvider>();
-    final profileProvider = context.watch<ProfileProvider>();
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: true); // Ensure correct context
+    final profileProvider = Provider.of<ProfileProvider>(context, listen: true); // Ensure correct context
     _logger.i('ImageListPage: profileProvider is $profileProvider');
 
-    if (profileProvider.profile == null) {
+    final profile = profileProvider.profile;
+
+    if (profile == null) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    if (!_isWelcomeMessageShown) {
+      _isWelcomeMessageShown = true;
+      _showWelcomeSnackbar(profile.displayName);
     }
 
     return GestureDetector(
@@ -103,7 +110,7 @@ class ImageListPageState extends State<ImageListPage> with SingleTickerProviderS
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          StreamBuilder<DocumentSnapshot>(
+                          /*StreamBuilder<DocumentSnapshot>(
                             stream: FirebaseFirestore.instance
                                 .collection('users')
                                 .doc(widget.userID)
@@ -128,25 +135,19 @@ class ImageListPageState extends State<ImageListPage> with SingleTickerProviderS
                                 onPressed: () {},
                               );
                             },
+                          ),*/
+                          Text(
+                            'Welcome, ${profile.displayName}',
+                            style: const TextStyle(color: Colors.white),
                           ),
-                          Consumer<ProfileProvider>(
-                            builder: (context, provider, child) {
-                              return Text(
-                                '${provider.profile?.touches ?? 0}',
-                                style: const TextStyle(fontSize: 80, color: Colors.white),
-                              );
-                            },
+                          Text(
+                            'Touches: ${profile.touches}',
+                            style: const TextStyle(color: Colors.white, fontSize: 80),
                           ),
-                          if (userData != null)
-                            Text(
-                              'Welcome, ${userData!['displayName'] ?? 'User'}',
-                              style: const TextStyle(color: Colors.white),
-                            )
-                          else
-                            const Text(
-                              'No user is currently signed in.',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                          IconButton(
+                            icon: const Icon(Icons.accessibility_new, color: Colors.white),
+                            onPressed: () {},
+                          ),
                         ],
                       ),
                     ),

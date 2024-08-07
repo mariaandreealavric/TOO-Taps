@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+// import 'package:cloud_firestore/cloud_firestore.dart'; // Commenta l'importazione di Firestore
 import 'package:fingerfy/services/auth_service.dart';
 import 'challenge.dart';
 
@@ -25,7 +26,8 @@ class ProfilePageState extends State<ProfilePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-      profileProvider.startListening(widget.userID);
+      // Utilizza i dati mock
+      profileProvider.setMockProfile(widget.userID);
       _nameController.text = profileProvider.profile?.displayName ?? '';
     });
   }
@@ -58,6 +60,7 @@ class ProfilePageState extends State<ProfilePage> {
             onPressed: () async {
               if (_isEditing) {
                 if (_image != null) {
+                  // Carica l'immagine mock
                   String imageUrl = await authService.uploadProfileImage(profileData!.uid, _image!);
                   profileProvider.updateProfile(profileData.copyWith(photoUrl: imageUrl));
                 }

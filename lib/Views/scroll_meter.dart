@@ -5,7 +5,7 @@ import 'package:fingerfy/providers/theme_provider.dart';
 import 'package:fingerfy/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart'; // Commenta l'importazione di Firestore
 import 'package:logger/logger.dart';
 
 class ScrollMeterPage extends StatefulWidget {
@@ -47,21 +47,21 @@ class ScrollMeterPageState extends State<ScrollMeterPage> {
     super.dispose();
   }
 
-  void _updateScrollPosition() async {
+  void _updateScrollPosition() {
     double currentScrollPosition = _scrollController.position.pixels;
     if (currentScrollPosition > _lastScrollPosition) {
       double distance = (currentScrollPosition - _lastScrollPosition) * 0.1 / 100.0;
       Provider.of<ScrollCounter>(context, listen: false).incrementScrolls();
 
       // Aggiorna anche i dati nel database Firestore
-      try {
-        await FirebaseFirestore.instance.collection('users').doc(widget.userID).update({
-          'scrolls': FieldValue.increment(distance.toInt()),
-        });
-        _logger.i('Dati di scorrimento aggiornati con successo.');
-      } catch (error) {
-        _logger.e('Errore durante l\'aggiornamento dei dati di scorrimento: $error');
-      }
+      // try {
+      //   await FirebaseFirestore.instance.collection('users').doc(widget.userID).update({
+      //     'scrolls': FieldValue.increment(distance.toInt()),
+      //   });
+      //   _logger.i('Dati di scorrimento aggiornati con successo.');
+      // } catch (error) {
+      //   _logger.e('Errore durante l\'aggiornamento dei dati di scorrimento: $error');
+      // }
     }
     _lastScrollPosition = currentScrollPosition;
   }
@@ -96,6 +96,7 @@ class ScrollMeterPageState extends State<ScrollMeterPage> {
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
     final profileProvider = context.watch<ProfileProvider>();
+    final scrollCounter = context.watch<ScrollCounter>();
 
     if (profileProvider.profile == null) {
       return const Center(child: CircularProgressIndicator());
@@ -125,25 +126,13 @@ class ScrollMeterPageState extends State<ScrollMeterPage> {
                 Container(
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(16.0),
-                  child: StreamBuilder<DocumentSnapshot>(
-                    stream: FirebaseFirestore.instance.collection('users').doc(widget.userID).snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text('Errore: ${snapshot.error}');
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      }
-                      var userData = snapshot.data!;
-                      return Text(
-                        'Hai percorso:\n${userData['scrolls'] ?? 0} $distanceUnit',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: themeProvider.currentTheme.brightness == Brightness.light ? Colors.blue : Colors.green,
-                          fontSize: 40,
-                        ),
-                      );
-                    },
+                  child: Text(
+                    'Hai percorso:\n${scrollCounter.scrolls} $distanceUnit',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: themeProvider.currentTheme.brightness == Brightness.light ? Colors.blue : Colors.green,
+                      fontSize: 40,
+                    ),
                   ),
                 ),
                 Expanded(
