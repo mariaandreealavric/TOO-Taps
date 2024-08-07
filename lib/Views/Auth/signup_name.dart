@@ -14,6 +14,7 @@ class SignUpNamePage extends StatefulWidget {
   SignUpNamePageState createState() => SignUpNamePageState();
 }
 
+
 class SignUpNamePageState extends State<SignUpNamePage> {
   final TextEditingController _nameController = TextEditingController();
   File? _image;
