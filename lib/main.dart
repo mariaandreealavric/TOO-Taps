@@ -1,8 +1,8 @@
 import 'package:fingerfy/Services/auth_service.dart';
 import 'package:fingerfy/Views/challenge.dart';
-import 'package:fingerfy/Views/classifica_page.dart';
+import 'package:fingerfy/Views/pod.dart';
 import 'package:fingerfy/Views/profilo.dart';
-import 'package:fingerfy/Views/scroll_meter.dart';
+import 'package:fingerfy/Views/scrolling.dart';
 // import 'package:fingerfy/config/firebase_options.dart'; // Commentato per evitare l'utilizzo di Firebase
 import 'package:fingerfy/providers/challenge_provider.dart';
 import 'package:fingerfy/providers/profile_provider.dart';
@@ -10,29 +10,22 @@ import 'package:fingerfy/providers/theme_provider.dart';
 import 'package:fingerfy/services/notification_service.dart';
 import 'package:fingerfy/views/auth/login_page.dart';
 import 'package:fingerfy/views/auth/signup_page.dart';
-import 'package:fingerfy/views/image_list_page.dart';
 // import 'package:firebase_auth/firebase_auth.dart'; // Commentato per evitare l'utilizzo di Firebase
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // import 'package:firebase_core/firebase_core.dart'; // Commentato per evitare l'utilizzo di Firebase
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
+//import 'package:timezone/data/latest.dart' as tz;
 import 'package:logger/logger.dart';
 
 import 'Models/mock_models.dart.dart';
-
+import 'Views/taps_home.dart';
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  /*
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  */
 
-  tz.initializeTimeZones();
-
+  // Initialize services here
   final notificationService = NotificationService();
   await notificationService.initialize();
 
@@ -42,16 +35,10 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => ChallengeProvider()),
-        ChangeNotifierProvider(create: (_) => ProfileProvider()),
-        // Usa i mock models qui
+        ChangeNotifierProvider(create: (_) => ProfileProvider()), // Ensure it's in the root context
+        // Mock models
         Provider<MockAuthModel>(create: (_) => MockAuthModel()),
         Provider<MockProfileModel>(create: (_) => MockProfileModel()),
-        /*
-        StreamProvider<User?>.value(
-          value: FirebaseAuth.instance.authStateChanges(),
-          initialData: null,
-        ),
-        */
       ],
       child: const MyApp(),
     ),
@@ -66,7 +53,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Image Broker',
+      title: 'TOO-Taps',
       theme: Provider.of<ThemeProvider>(context).currentTheme,
       home: const HomePage(),
       onGenerateRoute: (settings) {
@@ -79,21 +66,16 @@ class MyApp extends StatelessWidget {
           return null;
         }
 
-        if (settings.name == '/imageList' ||
-            settings.name == '/scrollMeter' ||
-            settings.name == '/classifica' ||
-            settings.name == '/profile' ||
+        // For routes that require authentication
+        if (settings.name == '/taps_home' ||
+            settings.name == '/scrolling' ||
+            settings.name == '/pod' ||
+            settings.name == '/profilo' ||
             settings.name == '/challenge') {
           return MaterialPageRoute(
             builder: (context) => AuthCheck(
               builder: (context, userID) {
-                return MultiProvider(
-                  providers: [
-                    // Ensure ProfileProvider is available here.
-                    Provider<ProfileProvider>(create: (_) => ProfileProvider()),
-                  ],
-                  child: _buildPageForRoute(settings.name!, userID),
-                );
+                return _buildPageForRoute(settings.name!, userID);
               },
             ),
           );
@@ -111,13 +93,13 @@ class MyApp extends StatelessWidget {
 
   Widget _buildPageForRoute(String name, String userID) {
     switch (name) {
-      case '/imageList':
-        return ImageListPage(userID: userID);
-      case '/scrollMeter':
-        return ScrollMeterPage(userID: userID);
-      case '/classifica':
-        return ClassificaPage(userID: userID);
-      case '/profile':
+      case '/taps_home':
+        return TapsHomePage(userID: userID);
+      case '/scrolling':
+        return ScrollingPage(userID: userID);
+      case '/pod':
+        return const PodPage();
+      case '/profilo':
         return ProfilePage(userID: userID);
       case '/challenge':
         return ChallengePage(userID: userID);
@@ -146,21 +128,15 @@ class _AuthCheckState extends State<AuthCheck> {
       final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
       final mockAuth = Provider.of<MockAuthModel>(context, listen: false);
 
-      if (mockAuth != null) {
-        profileProvider.setMockProfile(mockAuth.uid);
-        _logger.i('Profile set for mock user: ${mockAuth.uid}');
-      }
-    });
+      profileProvider.setMockProfile(mockAuth.uid);
+      _logger.i('Profile set for mock user: ${mockAuth.uid}');
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     final mockAuth = Provider.of<MockAuthModel>(context);
     _logger.i('AuthCheck: user is $mockAuth');
-
-    if (mockAuth == null) {
-      return const LoginPage();
-    }
 
     return widget.builder(context, mockAuth.uid);
   }

@@ -4,20 +4,19 @@ import 'package:fingerfy/Widgets/bottoni/bottone_profilo.dart';
 import 'package:fingerfy/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart'; // Importa il pacchetto logger
 
-class ImageListPage extends StatefulWidget {
+class TapsHomePage extends StatefulWidget {
   final String userID;
 
-  const ImageListPage({super.key, required this.userID});
+  const TapsHomePage({super.key, required this.userID});
 
   @override
-  ImageListPageState createState() => ImageListPageState();
+  TapsHomePageState createState() => TapsHomePageState();
 }
 
-class ImageListPageState extends State<ImageListPage> with SingleTickerProviderStateMixin {
+class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   bool _isWelcomeMessageShown = false;
   Map<String, dynamic>? userData;

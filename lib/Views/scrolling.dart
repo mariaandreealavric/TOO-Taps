@@ -8,16 +8,16 @@ import 'package:provider/provider.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart'; // Commenta l'importazione di Firestore
 import 'package:logger/logger.dart';
 
-class ScrollMeterPage extends StatefulWidget {
+class ScrollingPage extends StatefulWidget {
   final String userID;
 
-  const ScrollMeterPage({super.key, required this.userID});
+  const ScrollingPage({super.key, required this.userID});
 
   @override
-  ScrollMeterPageState createState() => ScrollMeterPageState();
+  ScrollingPageState createState() => ScrollingPageState();
 }
 
-class ScrollMeterPageState extends State<ScrollMeterPage> {
+class ScrollingPageState extends State<ScrollingPage> {
   final ScrollController _scrollController = ScrollController();
   double _lastScrollPosition = 0.0;
   final List<Color> _itemColors = [];
