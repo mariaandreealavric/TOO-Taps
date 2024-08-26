@@ -9,11 +9,7 @@ class ThemeProvider with ChangeNotifier {
 
   ThemeProvider() {
     _boxDecoration = const BoxDecoration(
-      gradient: LinearGradient(
-        colors: [Colors.white, Colors.blue],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
+      color: Colors.black,  // Aggiunta dello sfondo nero
     );
     _cardColor = Colors.transparent;
     _shadowColor = Colors.blue.withOpacity(0.4);
@@ -31,8 +27,9 @@ class ThemeProvider with ChangeNotifier {
     if (_currentTheme == ThemeData.light()) {
       _currentTheme = ThemeData.dark();
       _boxDecoration = const BoxDecoration(
+        color: Colors.black,  // Sfondo nero per il tema scuro
         gradient: LinearGradient(
-          colors: [Colors.white, Colors.red],
+          colors: [Colors.black, Colors.red],  // Sfondo nero con un gradiente
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -41,8 +38,9 @@ class ThemeProvider with ChangeNotifier {
     } else {
       _currentTheme = ThemeData.light();
       _boxDecoration = const BoxDecoration(
+        color: Colors.black,  // Sfondo nero per il tema chiaro
         gradient: LinearGradient(
-          colors: [Colors.white, Colors.blue],
+          colors: [Colors.black, Colors.blue],  // Sfondo nero con un gradiente
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
