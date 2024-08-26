@@ -1,42 +1,38 @@
-import 'package:fingerfy/Services/auth_service.dart';
-import 'package:fingerfy/Views/challenge.dart';
-import 'package:fingerfy/Views/pod.dart';
-import 'package:fingerfy/Views/profilo.dart';
-import 'package:fingerfy/Views/scrolling.dart';
-// import 'package:fingerfy/config/firebase_options.dart'; // Commentato per evitare l'utilizzo di Firebase
-import 'package:fingerfy/providers/challenge_provider.dart';
-import 'package:fingerfy/providers/profile_provider.dart';
-import 'package:fingerfy/providers/theme_provider.dart';
-import 'package:fingerfy/services/notification_service.dart';
-import 'package:fingerfy/views/auth/login_page.dart';
-import 'package:fingerfy/views/auth/signup_page.dart';
-// import 'package:firebase_auth/firebase_auth.dart'; // Commentato per evitare l'utilizzo di Firebase
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-// import 'package:firebase_core/firebase_core.dart'; // Commentato per evitare l'utilizzo di Firebase
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-//import 'package:timezone/data/latest.dart' as tz;
 import 'package:logger/logger.dart';
 
+import 'Services/auth_service.dart';
+import 'Views/challenge.dart';
+import 'Views/pod.dart';
+import 'Views/profilo.dart';
+import 'Views/scrolling.dart';
+import 'providers/challenge_provider.dart';
+import 'providers/profile_provider.dart';
+import 'providers/theme_provider.dart';
+import 'services/notification_service.dart';
+import 'views/auth/login_page.dart';
+import 'views/auth/signup_page.dart';
 import 'Models/mock_models.dart.dart';
 import 'Views/taps_home.dart';
+import 'Widgets/Navigazione/route_generator.dart';  // Import the RouteGenerator
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize services here
   final notificationService = NotificationService();
   await notificationService.initialize();
 
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => ChallengeProvider()),
-        ChangeNotifierProvider(create: (_) => ProfileProvider()), // Ensure it's in the root context
-        // Mock models
         Provider<MockAuthModel>(create: (_) => MockAuthModel()),
         Provider<MockProfileModel>(create: (_) => MockProfileModel()),
       ],
@@ -52,60 +48,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Debug log to check if ThemeProvider is available
+    final themeProviderAvailable = Provider.of<ThemeProvider>(context, listen: false) != null;
+    print('Debug: ThemeProvider is available: $themeProviderAvailable');
+
     return MaterialApp(
       title: 'TOO-Taps',
-      theme: Provider.of<ThemeProvider>(context).currentTheme,
-      home: const HomePage(),
-      onGenerateRoute: (settings) {
-        final routes = {
-          '/signup': (context) => const SignUpPage(),
-          '/login': (context) => const LoginPage(),
-        };
-
-        if (settings.name == null) {
-          return null;
-        }
-
-        // For routes that require authentication
-        if (settings.name == '/taps_home' ||
-            settings.name == '/scrolling' ||
-            settings.name == '/pod' ||
-            settings.name == '/profilo' ||
-            settings.name == '/challenge') {
-          return MaterialPageRoute(
-            builder: (context) => AuthCheck(
-              builder: (context, userID) {
-                return _buildPageForRoute(settings.name!, userID);
-              },
-            ),
-          );
-        }
-
-        final builder = routes[settings.name];
-        if (builder != null) {
-          return MaterialPageRoute(builder: builder);
-        }
-
-        return null;
-      },
+      theme: context.watch<ThemeProvider>().currentTheme,
+      home: const AuthWrapper(),
+      onGenerateRoute: RouteGenerator.generateRoute,  // Use RouteGenerator for route generation
     );
   }
+}
 
-  Widget _buildPageForRoute(String name, String userID) {
-    switch (name) {
-      case '/taps_home':
-        return TapsHomePage(userID: userID);
-      case '/scrolling':
-        return ScrollingPage(userID: userID);
-      case '/pod':
-        return const PodPage();
-      case '/profilo':
-        return ProfilePage(userID: userID);
-      case '/challenge':
-        return ChallengePage(userID: userID);
-      default:
-        return const LoginPage();
-    }
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Debug log to check if ProfileProvider is available in AuthWrapper
+    final profileProviderAvailable = Provider.of<ProfileProvider>(context, listen: false) != null;
+    print('Debug: ProfileProvider is available in AuthWrapper: $profileProviderAvailable');
+
+    return AuthCheck(
+      builder: (context, userID) {
+        return const HomePage();  // Adjust this part based on your navigation flow
+      },
+    );
   }
 }
 
@@ -124,18 +93,34 @@ class _AuthCheckState extends State<AuthCheck> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-      final mockAuth = Provider.of<MockAuthModel>(context, listen: false);
+    _initializeProfile();
+  }
 
+  Future<void> _initializeProfile() async {
+    // Debug log to check if ProfileProvider is available during profile initialization
+    final profileProviderExists = Provider.of<ProfileProvider>(context, listen: false) != null;
+    _logger.i('Debug: ProfileProvider is available in _initializeProfile: $profileProviderExists');
+
+    if (profileProviderExists) {
+      final profileProvider = context.read<ProfileProvider>();
+      final mockAuth = context.read<MockAuthModel>();
+
+      // Load profile with a delay to ensure the provider is ready
+      await Future.delayed(Duration.zero);
       profileProvider.setMockProfile(mockAuth.uid);
       _logger.i('Profile set for mock user: ${mockAuth.uid}');
-        });
+    } else {
+      _logger.e('ProfileProvider is not available in _initializeProfile');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final mockAuth = Provider.of<MockAuthModel>(context);
+    // Debug log to check if MockAuthModel is available
+    final mockAuthExists = Provider.of<MockAuthModel>(context, listen: false) != null;
+    _logger.i('Debug: MockAuthModel is available in AuthCheck build: $mockAuthExists');
+
+    final mockAuth = context.watch<MockAuthModel>();
     _logger.i('AuthCheck: user is $mockAuth');
 
     return widget.builder(context, mockAuth.uid);
@@ -147,13 +132,20 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = context.watch<ThemeProvider>();
+
+    // Debug log to check if ProfileProvider is available in HomePage
+    final profileProviderAvailable = Provider.of<ProfileProvider>(context, listen: false) != null;
+    print('Debug: ProfileProvider is available in HomePage: $profileProviderAvailable');
 
     return Scaffold(
       body: GestureDetector(
         onTap: () {
-          // Naviga direttamente a '/imageList' quando qualsiasi parte della pagina viene toccata
-          Navigator.pushNamed(context, '/imageList');
+          Navigator.pushNamed(
+            context,
+            '/taps_home',
+            arguments: 'some_user_id',  // Pass arguments where required
+          );  // Ensure context here has access to the providers
         },
         child: Container(
           decoration: themeProvider.boxDecoration,
@@ -161,41 +153,11 @@ class HomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(
-                  Icons.rocket,
-                  size: 100,
-                  color: Colors.white,
-                ),
+                Image(
+                    image: AssetImage('assets/logo.png'),
+                    width: 100,
+                    height: 100),
                 SizedBox(height: 20),
-                Text(
-                  'Image Broker',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(height: 20),
-                SizedBox(height: 20),
-                // Commentato i pulsanti "Registrati" e "Accedi"
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: <Widget>[
-                //     ElevatedButton(
-                //       onPressed: () {
-                //         Navigator.pushNamed(context, '/imageList'); // Bypass signup
-                //       },
-                //       child: const Text('Registrati'),
-                //     ),
-                //     const SizedBox(width: 20),
-                //     ElevatedButton(
-                //       onPressed: () {
-                //         Navigator.pushNamed(context, '/imageList'); // Bypass login
-                //       },
-                //       child: const Text('Accedi'),
-                //     ),
-                //   ],
-                // ),
               ],
             ),
           ),
