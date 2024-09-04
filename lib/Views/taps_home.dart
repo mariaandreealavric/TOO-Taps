@@ -1,11 +1,13 @@
-import 'package:fingerfy/Providers/profile_provider.dart';
 import 'package:fingerfy/Widgets/Navigazione/navigazione_home.dart';
 import 'package:fingerfy/Widgets/bottoni/bottone_profilo.dart';
 import 'package:fingerfy/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:logger/logger.dart'; // Importa il pacchetto logger
+import 'package:logger/logger.dart';
+import 'package:get/get.dart';
+
+import '../controllers/profile_controller.dart';
 
 class TapsHomePage extends StatefulWidget {
   final String userID;
@@ -61,10 +63,9 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
   Widget build(BuildContext context) {
     _logger.i('ImageListPage: Building with userID ${widget.userID}');
     final themeProvider = Provider.of<ThemeProvider>(context, listen: true); // Ensure correct context
-    final profileProvider = Provider.of<ProfileProvider>(context, listen: true); // Ensure correct context
-    _logger.i('ImageListPage: profileProvider is $profileProvider');
+    final profileController = Get.find<ProfileController>(); // GetX ProfileController
 
-    final profile = profileProvider.profile;
+    final profile = profileController.profile.value; // Use .value to access the actual ProfileModel
 
     if (profile == null) {
       return const Center(child: CircularProgressIndicator());
@@ -72,14 +73,14 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
 
     if (!_isWelcomeMessageShown) {
       _isWelcomeMessageShown = true;
-      _showWelcomeSnackbar(profile.displayName);
+      _showWelcomeSnackbar(profile.displayName); // Access displayName via profile
     }
 
     return GestureDetector(
       onTap: () {
         if (mounted) {
-          profileProvider.incrementTouches();
-          profileProvider.incrementScrolls();
+          profileController.incrementTouches(); // Use GetX controller method
+          profileController.incrementScrolls();
         }
       },
       child: Scaffold(
@@ -109,38 +110,12 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          /*StreamBuilder<DocumentSnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(widget.userID)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError) {
-                                return Text('Errore: ${snapshot.error}');
-                              }
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const CircularProgressIndicator();
-                              }
-
-                              userData = snapshot.data?.data() as Map<String, dynamic>?;
-
-                              if (userData != null && !_isWelcomeMessageShown) {
-                                _isWelcomeMessageShown = true;
-                                _showWelcomeSnackbar(userData!['displayName'] ?? 'User');
-                              }
-
-                              return IconButton(
-                                icon: const Icon(Icons.accessibility_new, color: Colors.white),
-                                onPressed: () {},
-                              );
-                            },
-                          ),*/
                           Text(
-                            'Welcome, ${profile.displayName}',
+                            'Welcome, ${profile.displayName}', // Use .value to access properties
                             style: const TextStyle(color: Colors.white),
                           ),
                           Text(
-                            'Touches: ${profile.touches}',
+                            'Touches: ${profile.touches}', // Use .value to access properties
                             style: const TextStyle(color: Colors.white, fontSize: 80),
                           ),
                           IconButton(
