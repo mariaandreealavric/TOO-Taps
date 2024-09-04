@@ -1,15 +1,11 @@
+import 'package:fingerfy/Providers/profile_provider.dart';
+import 'package:fingerfy/Widgets/Navigazione/navigazione_home.dart';
+import 'package:fingerfy/Widgets/bottoni/bottone_profilo.dart';
+import 'package:fingerfy/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:logger/logger.dart';
-
-import '../Widgets/Navigazione/navigazione_home.dart';
-
-
-
-
-import '../controllers/profile_controller.dart';
-import '../controllers/theme_controller.dart';
-import '../widgets/bottoni/bottone_profilo.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:logger/logger.dart'; // Importa il pacchetto logger
 
 class TapsHomePage extends StatefulWidget {
   final String userID;
@@ -23,9 +19,8 @@ class TapsHomePage extends StatefulWidget {
 class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   bool _isWelcomeMessageShown = false;
-  final Logger _logger = Logger();
-  final ProfileController profileController = Get.put(ProfileController());
-  final ThemeController themeController = Get.put(ThemeController());
+  Map<String, dynamic>? userData;
+  final Logger _logger = Logger(); // Istanzia Logger
 
   @override
   void initState() {
@@ -45,32 +40,46 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
   void _showWelcomeSnackbar(String userName) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        Get.snackbar(
-          'Welcome',
-          'Welcome, $userName',
-          duration: const Duration(seconds: 3),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Welcome, $userName'),
+            duration: const Duration(seconds: 3),
+          ),
         );
       }
     });
   }
 
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, '/');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    _logger.i('TapsHomePage: Building with userID ${widget.userID}');
+    _logger.i('ImageListPage: Building with userID ${widget.userID}');
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: true); // Ensure correct context
+    final profileProvider = Provider.of<ProfileProvider>(context, listen: true); // Ensure correct context
+    _logger.i('ImageListPage: profileProvider is $profileProvider');
+
+    final profile = profileProvider.profile;
+
+    if (profile == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     if (!_isWelcomeMessageShown) {
       _isWelcomeMessageShown = true;
-      final profile = profileController.profile.value;
-      if (profile != null) {
-        _showWelcomeSnackbar(profile.displayName);
-      }
+      _showWelcomeSnackbar(profile.displayName);
     }
 
     return GestureDetector(
       onTap: () {
         if (mounted) {
-          profileController.incrementTouches();
-          profileController.incrementScrolls();
+          profileProvider.incrementTouches();
+          profileProvider.incrementScrolls();
         }
       },
       child: Scaffold(
@@ -85,14 +94,12 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
             const ProfileButton(),
             IconButton(
               icon: const Icon(Icons.logout),
-              onPressed: () {
-                Get.offAllNamed('/');
-              },
+              onPressed: _signOut,
             ),
           ],
         ),
         body: Container(
-          decoration: themeController.boxDecoration,
+          decoration: themeProvider.boxDecoration,
           child: LayoutBuilder(
             builder: (context, constraints) {
               return Column(
@@ -102,12 +109,38 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          /*StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(widget.userID)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return Text('Errore: ${snapshot.error}');
+                              }
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              }
+
+                              userData = snapshot.data?.data() as Map<String, dynamic>?;
+
+                              if (userData != null && !_isWelcomeMessageShown) {
+                                _isWelcomeMessageShown = true;
+                                _showWelcomeSnackbar(userData!['displayName'] ?? 'User');
+                              }
+
+                              return IconButton(
+                                icon: const Icon(Icons.accessibility_new, color: Colors.white),
+                                onPressed: () {},
+                              );
+                            },
+                          ),*/
                           Text(
-                            'Welcome, ${profileController.profile.value?.displayName ?? ''}',
+                            'Welcome, ${profile.displayName}',
                             style: const TextStyle(color: Colors.white),
                           ),
                           Text(
-                            'Touches: ${profileController.profile.value?.touches ?? 0}',
+                            'Touches: ${profile.touches}',
                             style: const TextStyle(color: Colors.white, fontSize: 80),
                           ),
                           IconButton(
