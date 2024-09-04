@@ -1,5 +1,6 @@
 // Mock AuthModel
-import 'package:fingerfy/Models/profile_model.dart';
+import 'package:fingerfy/models/profile_model.dart';
+
 import 'auth_model.dart';
 
 class MockAuthModel extends AuthModel {

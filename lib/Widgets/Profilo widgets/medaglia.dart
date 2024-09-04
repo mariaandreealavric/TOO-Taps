@@ -13,7 +13,6 @@ class Medaglia extends StatelessWidget {
 
     return CircleAvatar(
       radius: 30,
-      backgroundColor: themeProvider.cardColor,
       child: Icon(
         Icons.emoji_events,
         color: Colors.yellow[700],

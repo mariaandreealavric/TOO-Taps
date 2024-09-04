@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:math';
 import 'package:fingerfy/controllers/Contatori/scroll_counter.dart';
 import 'package:fingerfy/controllers/theme_controller.dart';
-import 'package:fingerfy/providers/profile_provider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart'; // Commenta l'importazione di Firestore
 import 'package:logger/logger.dart';
+
+import '../controllers/profile_controller.dart';
 
 class ScrollingPage extends StatefulWidget {
   final String userID;
@@ -95,7 +97,7 @@ class ScrollingPageState extends State<ScrollingPage> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeController>();
-    final profileProvider = context.watch<ProfileProvider>();
+    final profileProvider = context.watch<ProfileController>();
     final scrollCounter = context.watch<ScrollCounter>();
 
     if (profileProvider.profile == null) {

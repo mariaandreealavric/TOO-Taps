@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fingerfy/Models/profile_model.dart';
+import 'package:fingerfy/models/profile_model.dart';
+
 import 'package:flutter/material.dart';
 
 

@@ -1,23 +1,14 @@
 import 'package:fingerfy/Widgets/Navigazione/navigazione.dart';
 import 'package:flutter/material.dart';
-import 'package:fingerfy/models/profile_model.dart'; // Assicurati di importare il modello
+import 'package:get/get.dart';
+import '../controllers/profile_controller.dart'; // Usa il percorso coerente per il controller
 
 class PodPage extends StatelessWidget {
   const PodPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Simuliamo un profilo utente per l'esempio
-    final profile = ProfileModel(
-      uid: '12345',
-      displayName: 'User',
-      email: 'user@example.com',
-      photoUrl: 'https://example.com/photo.jpg',
-      touches: 0,
-      scrolls: 0,
-      trophies: [],
-      challenges: [],
-    );
+    final profileController = Get.find<ProfileController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +34,14 @@ class PodPage extends StatelessWidget {
             right: 0,
             child: Container(
               color: Colors.blue,
-              child: Navigation(profile: profile), // Passa il profilo richiesto
+              child: Obx(() {
+                final profile = profileController.profile.value;
+                if (profile == null) {
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  return Navigation(profile: profile);  // Assicurati di avere sempre un ritorno Widget
+                }
+              }),
             ),
           ),
         ],

@@ -1,6 +1,7 @@
 // controllers/touch_controller.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fingerfy/Models/profile_model.dart';
+import 'package:fingerfy/models/profile_model.dart';
+
 import 'package:get/get.dart';
 
 class TouchController extends GetxController {

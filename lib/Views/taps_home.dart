@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 import '../Widgets/Navigazione/navigazione_home.dart';
-import '../controllers/profile_provider.dart';
 
 
 
+
+import '../controllers/profile_controller.dart';
 import '../controllers/theme_controller.dart';
 import '../widgets/bottoni/bottone_profilo.dart';
 

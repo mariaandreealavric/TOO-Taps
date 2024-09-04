@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/Contatori/touch_counter.dart';
-import '../../Models/profile_model.dart'; // Assicurati di importare il modello corretto
+import '../../models/profile_model.dart'; // Assicurati di importare il modello corretto
 
 class Navigation extends StatelessWidget {
   final ProfileModel profile; // Aggiungi un parametro per il profilo utente

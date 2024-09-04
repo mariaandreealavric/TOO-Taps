@@ -1,7 +1,10 @@
-import 'package:fingerfy/Models/profile_model.dart';
-import 'package:fingerfy/providers/challenge_provider.dart';
+import 'package:fingerfy/models/profile_model.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../controllers/challenge_provider.dart';
 
 class ChallengeButton extends StatelessWidget {
   final ProfileModel challenger;
@@ -11,7 +14,7 @@ class ChallengeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final challengeProvider = Provider.of<ChallengeProvider>(context);
+    final challengeProvider = Provider.of<ChallengeController>(context);
     bool isOngoing = challengeProvider.isChallengeOngoing();
 
     return IconButton(

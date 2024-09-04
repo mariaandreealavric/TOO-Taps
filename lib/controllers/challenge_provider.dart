@@ -1,9 +1,10 @@
-import 'package:fingerfy/Models/profile_model.dart';
+import 'package:fingerfy/models/profile_model.dart';
+
 import 'package:flutter/material.dart';
 import '../services/challenge_service.dart';
 
 
-class ChallengeProvider with ChangeNotifier {
+class ChallengeController with ChangeNotifier {
   final ChallengeService _challengeService = ChallengeService();
   DateTime? _startTime;
   ProfileModel? _challenger;

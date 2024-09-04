@@ -1,7 +1,7 @@
-import 'package:fingerfy/providers/challenge_provider.dart';
-import 'package:fingerfy/providers/profile_provider.dart';
+import 'package:fingerfy/controllers/challenge_provider.dart'; // Assicurati che sia un controller GetX
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart'; // Importa GetX
+import '../controllers/profile_controller.dart'; // Importa ProfileController
 
 class ChallengePage extends StatelessWidget {
   final String userID;
@@ -10,44 +10,54 @@ class ChallengePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final challengeProvider = Provider.of<ChallengeProvider>(context);
-    final profileProvider = Provider.of<ProfileProvider>(context);
+    // Ottieni l'istanza di ProfileController e ChallengeController usando GetX
+    final profileController = Get.find<ProfileController>();
+    final challengeController = Get.find<ChallengeController>(); // Supponiamo che ChallengeController utilizzi anche GetX
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sfide'),
       ),
-      body: ListView.builder(
-        itemCount: profileProvider.profile?.challenges.length ?? 0,
-        itemBuilder: (context, index) {
-          final challenge = profileProvider.profile!.challenges[index];
-          final isChallenger = challenge['challengerUid'] == userID;
-          final opponentUid = isChallenger ? challenge['opponentUid'] : challenge['challengerUid'];
-          final opponentTouches = isChallenger ? challenge['opponentTouches'] : challenge['challengerTouches'];
-          final opponentScrolls = isChallenger ? challenge['opponentScrolls'] : challenge['challengerScrolls'];
-          final userTouches = isChallenger ? challenge['challengerTouches'] : challenge['opponentTouches'];
-          final userScrolls = isChallenger ? challenge['challengerScrolls'] : challenge['opponentScrolls'];
+      body: Obx(() {
+        // Usa Obx per osservare i cambiamenti nello stato di profileController
+        if (profileController.profile.value == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          return ListTile(
-            title: Text('Sfida con $opponentUid'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Inizio: ${challenge['startDate'].toDate()} - Fine: ${challenge['endDate'].toDate()}'),
-                Text('I tuoi tocchi: $userTouches, I tuoi scrolls: $userScrolls'),
-                Text('Tocchi avversario: $opponentTouches, Scrolls avversario: $opponentScrolls'),
-              ],
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                await challengeProvider.completeChallenge();
-                profileProvider.startListening(userID); // Ricarica il profilo in tempo reale
-              },
-            ),
-          );
-        },
-      ),
+        // Controlla la lista delle sfide
+        final challenges = profileController.profile.value!.challenges;
+        return ListView.builder(
+          itemCount: challenges.length,
+          itemBuilder: (context, index) {
+            final challenge = challenges[index];
+            final isChallenger = challenge['challengerUid'] == userID;
+            final opponentUid = isChallenger ? challenge['opponentUid'] : challenge['challengerUid'];
+            final opponentTouches = isChallenger ? challenge['opponentTouches'] : challenge['challengerTouches'];
+            final opponentScrolls = isChallenger ? challenge['opponentScrolls'] : challenge['challengerScrolls'];
+            final userTouches = isChallenger ? challenge['challengerTouches'] : challenge['opponentTouches'];
+            final userScrolls = isChallenger ? challenge['challengerScrolls'] : challenge['opponentScrolls'];
+
+            return ListTile(
+              title: Text('Sfida con $opponentUid'),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Inizio: ${challenge['startDate'].toDate()} - Fine: ${challenge['endDate'].toDate()}'),
+                  Text('I tuoi tocchi: $userTouches, I tuoi scrolls: $userScrolls'),
+                  Text('Tocchi avversario: $opponentTouches, Scrolls avversario: $opponentScrolls'),
+                ],
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.check),
+                onPressed: () async {
+                  await challengeController.completeChallenge(); // Supponiamo che questo sia un metodo nel ChallengeController
+                  profileController.ensureProfileExists(userID); // Ricarica il profilo in tempo reale
+                },
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 }

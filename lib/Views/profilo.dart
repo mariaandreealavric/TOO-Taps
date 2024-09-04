@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-import '../controllers/profile_provider.dart';
+
+import '../controllers/profile_controller.dart';
 import 'challenge.dart';
 
 class ProfilePage extends StatefulWidget {

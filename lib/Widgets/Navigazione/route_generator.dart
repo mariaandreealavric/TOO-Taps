@@ -1,33 +1,43 @@
+// widgets/navigazione/route_generator.dart
 import 'package:flutter/material.dart';
-import 'package:fingerfy/Views/pod.dart';
-import 'package:fingerfy/Views/taps_home.dart';
-import 'package:fingerfy/Views/profilo.dart';
-import 'package:fingerfy/Views/scrolling.dart';
-import 'package:fingerfy/Views/challenge.dart';
-import 'package:fingerfy/main.dart';
+import 'package:get/get.dart';
+import 'package:fingerfy/views/pod.dart';
+import 'package:fingerfy/views/taps_home.dart';
+import 'package:fingerfy/views/profilo.dart';
+import 'package:fingerfy/views/scrolling.dart';
+import 'package:fingerfy/views/challenge.dart';
+import 'package:fingerfy/views/home_page.dart';
 
 class RouteGenerator {
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    final args = settings.arguments as String?;
+  // Lista delle pagine definite come static
+  static final List<GetPage<dynamic>> getPages = [
+    GetPage(
+      name: '/',
+      page: () => const HomePage(),
+    ),
+    GetPage(
+      name: '/taps_home',
+      page: () => TapsHomePage(userID: 'default_user_id'),
+    ),
+    GetPage(
+      name: '/scrolling',
+      page: () => ScrollingPage(userID: 'default_user_id'),
+    ),
+    GetPage(
+      name: '/pod',
+      page: () => const PodPage(),
+    ),
+    GetPage(
+      name: '/profilo',
+      page: () => ProfilePage(userID: 'default_user_id'),
+    ),
+    GetPage(
+      name: '/challenge',
+      page: () => ChallengePage(userID: 'default_user_id'),
+    ),
+  ];
 
-    switch (settings.name) {
-      case '/':
-        return MaterialPageRoute(builder: (context) => const HomePage());
-      case '/taps_home':
-        return MaterialPageRoute(builder: (context) => TapsHomePage(userID: args ?? 'default_user_id'));  // Provide default if args are null
-      case '/scrolling':
-        return MaterialPageRoute(builder: (context) => ScrollingPage(userID: args ?? 'default_user_id'));  // Provide default
-      case '/pod':
-        return MaterialPageRoute(builder: (context) => const PodPage());
-      case '/profilo':
-        return MaterialPageRoute(builder: (context) => ProfilePage(userID: args ?? 'default_user_id'));  // Provide default if args are null
-      case '/challenge':
-        return MaterialPageRoute(builder: (context) => ChallengePage(userID: args ?? 'default_user_id'));  // Provide default if args are null
-      default:
-        return _errorRoute();
-    }
-  }
-
+  // Questo metodo gestisce eventuali errori di routing
   static Route<dynamic> _errorRoute() {
     return MaterialPageRoute(
       builder: (context) {
