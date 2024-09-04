@@ -1,6 +1,8 @@
-import 'package:fingerfy/Providers/Contatori/touch_counter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../controllers/Contatori/touch_counter.dart';
 
 class NavigationHome extends StatelessWidget {
   const NavigationHome({super.key});
@@ -8,7 +10,7 @@ class NavigationHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void incrementTouchCount() {
-      Provider.of<TouchCounter>(context, listen: false).incrementTouches();
+      Provider.of<TouchController>(context, listen: false).incrementTouches();
     }
 
     return Container(

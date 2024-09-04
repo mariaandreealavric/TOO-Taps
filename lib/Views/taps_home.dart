@@ -1,12 +1,14 @@
-import 'package:fingerfy/Providers/profile_provider.dart';
-import 'package:fingerfy/Widgets/Navigazione/navigazione_home.dart';
-import 'package:fingerfy/Widgets/bottoni/bottone_profilo.dart';
-import 'package:fingerfy/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-// import 'package:firebase_auth/firebase_auth.dart'; // Commentato per evitare l'utilizzo di Firebase
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:fingerfy/Models/mock_models.dart.dart'; // Importa i Mock Models
+
+import '../Widgets/Navigazione/navigazione_home.dart';
+import '../controllers/profile_provider.dart';
+
+
+
+import '../controllers/theme_controller.dart';
+import '../widgets/bottoni/bottone_profilo.dart';
 
 class TapsHomePage extends StatefulWidget {
   final String userID;
@@ -20,7 +22,9 @@ class TapsHomePage extends StatefulWidget {
 class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   bool _isWelcomeMessageShown = false;
-  final Logger _logger = Logger(); // Istanzia Logger
+  final Logger _logger = Logger();
+  final ProfileController profileController = Get.put(ProfileController());
+  final ThemeController themeController = Get.put(ThemeController());
 
   @override
   void initState() {
@@ -40,11 +44,10 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
   void _showWelcomeSnackbar(String userName) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Welcome, $userName'),
-            duration: const Duration(seconds: 3),
-          ),
+        Get.snackbar(
+          'Welcome',
+          'Welcome, $userName',
+          duration: const Duration(seconds: 3),
         );
       }
     });
@@ -54,103 +57,77 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
   Widget build(BuildContext context) {
     _logger.i('TapsHomePage: Building with userID ${widget.userID}');
 
-    // Verifica che il ProfileProvider sia disponibile nel contesto
-    final profileProviderAvailable = Provider.of<ProfileProvider>(context, listen: false) != null;
-    _logger.i('Debug: ProfileProvider is available in TapsHomePage: $profileProviderAvailable');
-
-    if (!profileProviderAvailable) {
-      return const Scaffold(
-        body: Center(
-          child: Text('ProfileProvider not found in context.'),
-        ),
-      );
+    if (!_isWelcomeMessageShown) {
+      _isWelcomeMessageShown = true;
+      final profile = profileController.profile.value;
+      if (profile != null) {
+        _showWelcomeSnackbar(profile.displayName);
+      }
     }
 
-    return Builder(
-      builder: (context) {
-        final themeProvider = Provider.of<ThemeProvider>(context, listen: true);
-        final profileProvider = Provider.of<ProfileProvider>(context, listen: true);
-        final mockProfile = Provider.of<MockProfileModel>(context, listen: false);
-
-        _logger.i('TapsHomePage: profileProvider is $profileProvider');
-
-        final profile = profileProvider.profile ?? mockProfile; // Utilizza il profilo mock se necessario
-
-        if (profile == null) {
-          return const Center(child: CircularProgressIndicator());
+    return GestureDetector(
+      onTap: () {
+        if (mounted) {
+          profileController.incrementTouches();
+          profileController.incrementScrolls();
         }
-
-        if (!_isWelcomeMessageShown) {
-          _isWelcomeMessageShown = true;
-          _showWelcomeSnackbar(profile.displayName);
-        }
-
-        return GestureDetector(
-          onTap: () {
-            if (mounted) {
-              profileProvider.incrementTouches();
-              profileProvider.incrementScrolls();
-            }
-          },
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              title: const Text(
-                'Custom Page',
-                style: TextStyle(color: Colors.white),
-              ),
-              actions: <Widget>[
-                const ProfileButton(),
-                IconButton(
-                  icon: const Icon(Icons.logout),
-                  onPressed: () {
-                    // Logica mock per il logout se necessario
-                    Navigator.pushReplacementNamed(context, '/');
-                  },
-                ),
-              ],
-            ),
-            body: Container(
-              decoration: themeProvider.boxDecoration,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Welcome, ${profile.displayName}',
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              Text(
-                                'Touches: ${profile.touches}',
-                                style: const TextStyle(color: Colors.white, fontSize: 80),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.accessibility_new, color: Colors.white),
-                                onPressed: () {},
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: constraints.maxWidth,
-                        color: Colors.transparent,
-                        child: const NavigationHome(),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-        );
       },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: const Text(
+            'Custom Page',
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: <Widget>[
+            const ProfileButton(),
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                Get.offAllNamed('/');
+              },
+            ),
+          ],
+        ),
+        body: Container(
+          decoration: themeController.boxDecoration,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Welcome, ${profileController.profile.value?.displayName ?? ''}',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            'Touches: ${profileController.profile.value?.touches ?? 0}',
+                            style: const TextStyle(color: Colors.white, fontSize: 80),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.accessibility_new, color: Colors.white),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: constraints.maxWidth,
+                    color: Colors.transparent,
+                    child: const NavigationHome(),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

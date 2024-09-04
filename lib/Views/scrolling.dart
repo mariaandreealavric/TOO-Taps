@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:fingerfy/Providers/Contatori/scroll_counter.dart';
-import 'package:fingerfy/providers/theme_provider.dart';
+import 'package:fingerfy/controllers/Contatori/scroll_counter.dart';
+import 'package:fingerfy/controllers/theme_controller.dart';
 import 'package:fingerfy/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -94,7 +94,7 @@ class ScrollingPageState extends State<ScrollingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.watch<ThemeProvider>();
+    final themeProvider = context.watch<ThemeController>();
     final profileProvider = context.watch<ProfileProvider>();
     final scrollCounter = context.watch<ScrollCounter>();
 

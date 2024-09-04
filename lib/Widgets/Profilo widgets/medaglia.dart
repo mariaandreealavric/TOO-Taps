@@ -1,4 +1,5 @@
-import 'package:fingerfy/Providers/theme_provider.dart';
+
+import 'package:fingerfy/controllers/theme_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,7 +9,7 @@ class Medaglia extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeController>(context);
 
     return CircleAvatar(
       radius: 30,

@@ -1,10 +1,9 @@
-import 'package:fingerfy/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-// import 'package:cloud_firestore/cloud_firestore.dart'; // Commenta l'importazione di Firestore
-import 'package:fingerfy/services/auth_service.dart';
+
+import '../controllers/profile_provider.dart';
 import 'challenge.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -19,16 +18,15 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> {
   bool _isEditing = false;
   final TextEditingController _nameController = TextEditingController();
+  final ProfileController profileController = Get.put(ProfileController());
   File? _image;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-      // Utilizza i dati mock
-      profileProvider.setMockProfile(widget.userID);
-      _nameController.text = profileProvider.profile?.displayName ?? '';
+      profileController.setMockProfile(widget.userID);
+      _nameController.text = profileController.profile.value?.displayName ?? '';
     });
   }
 
@@ -43,14 +41,6 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final profileProvider = context.watch<ProfileProvider>();
-    final profileData = profileProvider.profile;
-    final authService = context.watch<AuthService>();  // Usa AuthService
-
-    if (profileProvider.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profilo'),
@@ -59,12 +49,10 @@ class ProfilePageState extends State<ProfilePage> {
             icon: Icon(_isEditing ? Icons.check : Icons.edit),
             onPressed: () async {
               if (_isEditing) {
-                if (_image != null) {
-                  // Carica l'immagine mock
-                  String imageUrl = await authService.uploadProfileImage(profileData!.uid, _image!);
-                  profileProvider.updateProfile(profileData.copyWith(photoUrl: imageUrl));
+                final profileData = profileController.profile.value;
+                if (profileData != null) {
+                  profileController.updateProfile(profileData.copyWith(displayName: _nameController.text));
                 }
-                profileProvider.updateProfile(profileData!.copyWith(displayName: _nameController.text));
               }
               setState(() {
                 _isEditing = !_isEditing;
@@ -73,9 +61,13 @@ class ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
+      body: Obx(() {
+        if (profileController.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final profileData = profileController.profile.value;
+        return ListView(
+          padding: const EdgeInsets.all(16.0),
           children: [
             GestureDetector(
               onTap: _isEditing ? _pickImage : null,
@@ -99,23 +91,16 @@ class ProfilePageState extends State<ProfilePage> {
             Text('Email: ${profileData?.email ?? ''}'),
             const SizedBox(height: 20),
             Text('Touches: ${profileData?.touches ?? 0}'),
-            Text('Trofei: ${profileData?.trophies.length ?? 0}'),
-            Text('Scrolls: ${profileData?.scrolls ?? 0}'),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChallengePage(userID: widget.userID),
-                  ),
-                );
+                Get.to(() => ChallengePage(userID: widget.userID));
               },
               child: const Text('Visualizza Sfide'),
             ),
           ],
-        ),
-      ),
+        );
+      }),
     );
   }
 }

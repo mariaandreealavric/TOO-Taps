@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ThemeProvider with ChangeNotifier {
+class ThemeController with ChangeNotifier {
   late BoxDecoration _boxDecoration;
   late Color _cardColor;
   late Color _shadowColor;
   late ThemeData _currentTheme;
   late Color _listTileColor;
 
-  ThemeProvider() {
+  ThemeController() {
     _boxDecoration = const BoxDecoration(
       color: Colors.black,  // Aggiunta dello sfondo nero
     );

@@ -10,7 +10,7 @@ import 'Views/profilo.dart';
 import 'Views/scrolling.dart';
 import 'providers/challenge_provider.dart';
 import 'providers/profile_provider.dart';
-import 'providers/theme_provider.dart';
+import 'controllers/theme_controller.dart';
 import 'services/notification_service.dart';
 import 'views/auth/login_page.dart';
 import 'views/auth/signup_page.dart';
@@ -31,7 +31,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => AuthService()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeController()),
         ChangeNotifierProvider(create: (_) => ChallengeProvider()),
         Provider<MockAuthModel>(create: (_) => MockAuthModel()),
         Provider<MockProfileModel>(create: (_) => MockProfileModel()),
@@ -49,12 +49,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Debug log to check if ThemeProvider is available
-    final themeProviderAvailable = Provider.of<ThemeProvider>(context, listen: false) != null;
+    final themeProviderAvailable = Provider.of<ThemeController>(context, listen: false) != null;
     print('Debug: ThemeProvider is available: $themeProviderAvailable');
 
     return MaterialApp(
       title: 'TOO-Taps',
-      theme: context.watch<ThemeProvider>().currentTheme,
+      theme: context.watch<ThemeController>().currentTheme,
       home: const AuthWrapper(),
       onGenerateRoute: RouteGenerator.generateRoute,  // Use RouteGenerator for route generation
     );
@@ -132,7 +132,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.watch<ThemeProvider>();
+    final themeProvider = context.watch<ThemeController>();
 
     // Debug log to check if ProfileProvider is available in HomePage
     final profileProviderAvailable = Provider.of<ProfileProvider>(context, listen: false) != null;

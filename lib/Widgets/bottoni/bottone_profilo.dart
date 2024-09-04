@@ -1,7 +1,9 @@
-import 'package:fingerfy/Providers/Contatori/touch_counter.dart';
+
 import 'package:fingerfy/Views/profilo.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../controllers/Contatori/touch_counter.dart';
 
 class ProfileButton extends StatefulWidget {
   const ProfileButton({super.key});
@@ -12,7 +14,7 @@ class ProfileButton extends StatefulWidget {
 
 class _ProfileButtonState extends State<ProfileButton> {
   void _incrementTouchCount() {
-    Provider.of<TouchCounter>(context, listen: false).incrementTouches();
+    Provider.of<TouchController>(context, listen: false).incrementTouches();
   }
 
   @override
