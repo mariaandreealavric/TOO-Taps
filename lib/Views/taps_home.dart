@@ -1,13 +1,12 @@
-import 'package:fingerfy/Widgets/Navigazione/navigazione_home.dart';
+import 'package:fingerfy/Widgets/Navigazione/navigazione.dart';
 import 'package:fingerfy/Widgets/bottoni/bottone_profilo.dart';
-import 'package:fingerfy/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart';
 import 'package:get/get.dart';
 
 import '../controllers/profile_controller.dart';
+import '../controllers/theme_controller.dart'; // Import the GetX ThemeController
 
 class TapsHomePage extends StatefulWidget {
   final String userID;
@@ -22,7 +21,7 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
   late AnimationController _controller;
   bool _isWelcomeMessageShown = false;
   Map<String, dynamic>? userData;
-  final Logger _logger = Logger(); // Istanzia Logger
+  final Logger _logger = Logger(); // Instance of Logger
 
   @override
   void initState() {
@@ -42,11 +41,11 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
   void _showWelcomeSnackbar(String userName) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Welcome, $userName'),
-            duration: const Duration(seconds: 3),
-          ),
+        Get.snackbar(
+          'Welcome',
+          'Welcome, $userName',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
         );
       }
     });
@@ -55,32 +54,40 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut();
     if (mounted) {
-      Navigator.pushReplacementNamed(context, '/');
+      Get.offAllNamed('/'); // Use GetX for navigation after sign out
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    _logger.i('ImageListPage: Building with userID ${widget.userID}');
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: true); // Ensure correct context
+    _logger.i('TapsHomePage: Building with userID ${widget.userID}');
+
+    // Use GetX for ThemeController
+    final themeController = Get.find<ThemeController>();
     final profileController = Get.find<ProfileController>(); // GetX ProfileController
 
-    final profile = profileController.profile.value; // Use .value to access the actual ProfileModel
+    // Controlla lo stato di caricamento del profilo
+    if (profileController.isLoading.value) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
+    final profile = profileController.profile.value; // Usa .value per accedere al ProfileModel
+
+    // Se il profilo non è caricato, mostra un indicatore di caricamento
     if (profile == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
     if (!_isWelcomeMessageShown) {
       _isWelcomeMessageShown = true;
-      _showWelcomeSnackbar(profile.displayName); // Access displayName via profile
+      _showWelcomeSnackbar(profile.displayName); // Accedi a displayName tramite profile
     }
 
     return GestureDetector(
       onTap: () {
         if (mounted) {
-          profileController.incrementTouches(); // Use GetX controller method
-          profileController.incrementScrolls();
+          profileController.incrementTouches(); // Usa il metodo del controller GetX
+          profileController.incrementScrolls();   // Un altro metodo del controller GetX
         }
       },
       child: Scaffold(
@@ -100,7 +107,7 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
           ],
         ),
         body: Container(
-          decoration: themeProvider.boxDecoration,
+          decoration: themeController.boxDecoration, // Usa il GetX controller per la gestione del tema
           child: LayoutBuilder(
             builder: (context, constraints) {
               return Column(
@@ -111,11 +118,11 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Welcome, ${profile.displayName}', // Use .value to access properties
+                            'Welcome, ${profile.displayName}', // Usa .value per accedere alle proprietà
                             style: const TextStyle(color: Colors.white),
                           ),
                           Text(
-                            'Touches: ${profile.touches}', // Use .value to access properties
+                            'Touches: ${profile.touches}', // Usa .value per accedere alle proprietà
                             style: const TextStyle(color: Colors.white, fontSize: 80),
                           ),
                           IconButton(
@@ -129,7 +136,7 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
                   Container(
                     width: constraints.maxWidth,
                     color: Colors.transparent,
-                    child: const NavigationHome(),
+                    child: Navigation(profile: profile), // Passa l'argomento profile
                   ),
                 ],
               );

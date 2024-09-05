@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:math';
 import 'package:fingerfy/controllers/Contatori/scroll_counter.dart';
 import 'package:fingerfy/controllers/theme_controller.dart';
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart'; // Importa GetX
 // import 'package:cloud_firestore/cloud_firestore.dart'; // Commenta l'importazione di Firestore
 import 'package:logger/logger.dart';
+import '../widgets/Navigazione/navigazione.dart'; // Importa Navigation
 
 import '../controllers/profile_controller.dart';
 
@@ -53,9 +53,10 @@ class ScrollingPageState extends State<ScrollingPage> {
     double currentScrollPosition = _scrollController.position.pixels;
     if (currentScrollPosition > _lastScrollPosition) {
       double distance = (currentScrollPosition - _lastScrollPosition) * 0.1 / 100.0;
-      Provider.of<ScrollCounter>(context, listen: false).incrementScrolls();
+      // Utilizza il metodo GetX per incrementare i scroll
+      Get.find<ScrollCounter>().incrementScrolls();
 
-      // Aggiorna anche i dati nel database Firestore
+      // Aggiorna anche i dati nel database Firestore (commentato per ora)
       // try {
       //   await FirebaseFirestore.instance.collection('users').doc(widget.userID).update({
       //     'scrolls': FieldValue.increment(distance.toInt()),
@@ -96,24 +97,27 @@ class ScrollingPageState extends State<ScrollingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.watch<ThemeController>();
-    final profileProvider = context.watch<ProfileController>();
-    final scrollCounter = context.watch<ScrollCounter>();
+    final themeController = Get.find<ThemeController>(); // Usa GetX per il ThemeController
+    final profileController = Get.find<ProfileController>(); // Usa GetX per il ProfileController
+    final scrollCounter = Get.find<ScrollCounter>(); // Usa GetX per il ScrollCounter
 
-    if (profileProvider.profile == null) {
+    // Controlla se il profilo è caricato
+    if (profileController.profile.value == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
+    final profile = profileController.profile.value!; // Ottieni il profilo dal ProfileController
+
     return GestureDetector(
       onTap: () {
-        profileProvider.incrementTouches();
-        profileProvider.incrementScrolls();
+        profileController.incrementTouches();
+        profileController.incrementScrolls();
       },
       child: Scaffold(
         body: Stack(
           children: [
             Container(
-              decoration: themeProvider.boxDecoration,
+              decoration: themeController.boxDecoration,
             ),
             Column(
               children: [
@@ -132,7 +136,7 @@ class ScrollingPageState extends State<ScrollingPage> {
                     'Hai percorso:\n${scrollCounter.scrolls} $distanceUnit',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: themeProvider.currentTheme.brightness == Brightness.light ? Colors.blue : Colors.green,
+                      color: themeController.currentTheme.brightness == Brightness.light ? Colors.blue : Colors.green,
                       fontSize: 40,
                     ),
                   ),
@@ -152,6 +156,8 @@ class ScrollingPageState extends State<ScrollingPage> {
                     itemCount: _itemColors.length,
                   ),
                 ),
+                // Aggiungi il widget Navigation con il profilo
+                Navigation(profile: profile), // Passa il profilo al widget Navigation
               ],
             ),
           ],

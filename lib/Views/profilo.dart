@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-
 import '../controllers/profile_controller.dart';
+import '../widgets/navigazione/navigazione.dart'; // Importa NavigationHome
 import 'challenge.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -67,6 +67,9 @@ class ProfilePageState extends State<ProfilePage> {
           return const Center(child: CircularProgressIndicator());
         }
         final profileData = profileController.profile.value;
+        if (profileData == null) {
+          return const Center(child: Text('Profilo non trovato'));
+        }
         return ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
@@ -76,7 +79,7 @@ class ProfilePageState extends State<ProfilePage> {
                 radius: 50,
                 backgroundImage: _image != null
                     ? FileImage(_image!)
-                    : NetworkImage(profileData?.photoUrl ?? '') as ImageProvider,
+                    : NetworkImage(profileData.photoUrl ?? '') as ImageProvider,
               ),
             ),
             const SizedBox(height: 20),
@@ -89,9 +92,9 @@ class ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Email: ${profileData?.email ?? ''}'),
+            Text('Email: ${profileData.email ?? ''}'),
             const SizedBox(height: 20),
-            Text('Touches: ${profileData?.touches ?? 0}'),
+            Text('Touches: ${profileData.touches ?? 0}'),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
@@ -99,6 +102,9 @@ class ProfilePageState extends State<ProfilePage> {
               },
               child: const Text('Visualizza Sfide'),
             ),
+            const SizedBox(height: 20),
+            // Aggiungi NavigationHome con il profilo
+            Navigation(profile: profileData), // Passa il profilo al widget NavigationHome
           ],
         );
       }),

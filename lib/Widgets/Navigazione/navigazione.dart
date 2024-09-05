@@ -1,4 +1,3 @@
-// widgets/navigation.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,9 +25,9 @@ class Navigation extends StatelessWidget {
           GestureDetector(
             onTap: touchController.incrementTouches, // Usa il metodo del controller
             child: IconButton(
-              icon: const Icon(Icons.star, size: 36.0, color: Colors.white),
+              icon: const Icon(Icons.broken_image_outlined, size: 36.0, color: Colors.white),
               onPressed: () {
-                Get.toNamed('/classifica');
+                Get.toNamed('/taps_home');
               },
             ),
           ),
@@ -37,16 +36,16 @@ class Navigation extends StatelessWidget {
             child: IconButton(
               icon: const Icon(Icons.rocket, size: 36.0, color: Colors.white),
               onPressed: () {
-                Get.toNamed('/scrollMeter');
+                Get.toNamed('/scrolling');
               },
             ),
           ),
           GestureDetector(
             onTap: touchController.incrementTouches, // Usa il metodo del controller
             child: IconButton(
-              icon: const Icon(Icons.broken_image_outlined, size: 36.0, color: Colors.white),
+              icon: const Icon(Icons.star, size: 36.0, color: Colors.white),
               onPressed: () {
-                Get.toNamed('/imageList');
+                Get.toNamed('/pod');
               },
             ),
           ),

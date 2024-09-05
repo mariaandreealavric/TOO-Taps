@@ -17,11 +17,11 @@ class RouteGenerator {
     ),
     GetPage(
       name: '/taps_home',
-      page: () => TapsHomePage(userID: 'default_user_id'),
+      page: () => const TapsHomePage(userID: 'default_user_id'),
     ),
     GetPage(
       name: '/scrolling',
-      page: () => ScrollingPage(userID: 'default_user_id'),
+      page: () => const ScrollingPage(userID: 'default_user_id'),
     ),
     GetPage(
       name: '/pod',
@@ -29,11 +29,11 @@ class RouteGenerator {
     ),
     GetPage(
       name: '/profilo',
-      page: () => ProfilePage(userID: 'default_user_id'),
+      page: () => const ProfilePage(userID: 'default_user_id'),
     ),
     GetPage(
       name: '/challenge',
-      page: () => ChallengePage(userID: 'default_user_id'),
+      page: () => const ChallengePage(userID: 'default_user_id'),
     ),
   ];
 
