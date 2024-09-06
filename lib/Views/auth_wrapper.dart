@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
-import '../main.dart';
 import 'auth_check.dart';
 import 'home_page.dart';
 

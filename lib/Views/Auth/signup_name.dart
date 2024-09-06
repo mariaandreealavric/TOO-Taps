@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart'; // Importa GetX
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:fingerfy/services/auth_service.dart';
 
 class SignUpNamePage extends StatefulWidget {
@@ -13,7 +13,6 @@ class SignUpNamePage extends StatefulWidget {
   @override
   SignUpNamePageState createState() => SignUpNamePageState();
 }
-
 
 class SignUpNamePageState extends State<SignUpNamePage> {
   final TextEditingController _nameController = TextEditingController();
@@ -31,16 +30,14 @@ class SignUpNamePageState extends State<SignUpNamePage> {
 
   Future<void> _signUp() async {
     if (_image == null || _nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Per favore, inserisci il tuo nome e seleziona un\'immagine')),
-      );
+      Get.snackbar('Errore', 'Per favore, inserisci il tuo nome e seleziona un\'immagine', // Usa GetX per Snackbar
+          snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
     if (!_isValidEmail(widget.email)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Per favore, inserisci un\'email valida')),
-      );
+      Get.snackbar('Errore', 'Per favore, inserisci un\'email valida', // Usa GetX per Snackbar
+          snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
@@ -48,7 +45,7 @@ class SignUpNamePageState extends State<SignUpNamePage> {
       _isSigningUp = true;
     });
 
-    final authService = Provider.of<AuthService>(context, listen: false);
+    final authService = Get.find<AuthService>(); // Usa GetX per ottenere il servizio di autenticazione
     try {
       await authService.signUpWithEmailAndPassword(
         widget.email,
@@ -58,13 +55,12 @@ class SignUpNamePageState extends State<SignUpNamePage> {
       );
 
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/login');
+        Get.offNamed('/login'); // Usa GetX per la navigazione
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore durante la registrazione: $e')),
-        );
+        Get.snackbar('Errore durante la registrazione', '$e', // Usa GetX per Snackbar
+            snackPosition: SnackPosition.BOTTOM);
       }
     } finally {
       setState(() {

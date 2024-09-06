@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart'; // Importa GetX
 import 'package:fingerfy/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,21 +14,22 @@ class LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  // Metodo di login
   Future<void> login() async {
     if (_formKey.currentState!.validate()) {
-      final authService = Provider.of<AuthService>(context, listen: false);
+      final authService = Get.find<AuthService>(); // Usa GetX per ottenere il servizio di autenticazione
       try {
         await authService.signInWithEmailAndPassword(
           emailController.text,
           passwordController.text,
         );
         if (mounted) {
-          Navigator.pushReplacementNamed(context, '/imageList');
+          Get.offNamed('/imageList'); // Usa GetX per la navigazione
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Login failed: $e')),
+          Get.snackbar('Login Failed', 'Login failed: $e', // Usa GetX per mostrare Snackbar
+            snackPosition: SnackPosition.BOTTOM,
           );
         }
       }
@@ -88,6 +89,4 @@ class LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
 }
-

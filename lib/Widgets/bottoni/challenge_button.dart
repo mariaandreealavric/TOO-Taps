@@ -1,10 +1,8 @@
 import 'package:fingerfy/models/profile_model.dart';
-
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
-import '../../controllers/challenge_provider.dart';
+import '../../controllers/challenge_controller.dart'; // Assicurati di importare il controller giusto
 
 class ChallengeButton extends StatelessWidget {
   final ProfileModel challenger;
@@ -14,27 +12,30 @@ class ChallengeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final challengeProvider = Provider.of<ChallengeController>(context);
-    bool isOngoing = challengeProvider.isChallengeOngoing();
+    final challengeController = Get.find<ChallengeController>(); // Usa GetX per ottenere l'istanza del controller
 
-    return IconButton(
-      icon: Icon(
-        Icons.sports_kabaddi,
-        color: isOngoing ? Colors.red : Colors.white,
-      ),
-      onPressed: () {
-        if (!isOngoing) {
-          challengeProvider.startChallenge(challenger, opponent);
+    return Obx(() { // Usa Obx per aggiornare l'UI automaticamente quando cambia lo stato
+      bool isOngoing = challengeController.isChallengeOngoing.value; // Usa .value per ottenere il valore di RxBool
 
-          // Schedule challenge completion after 7 days
-          Future.delayed(const Duration(days: 7), () async {
-            await challengeProvider.completeChallenge();
-            if (challengeProvider.isChallengeCompleted()) {
-              // Update the state or notify the UI as needed
-            }
-          });
-        }
-      },
-    );
+      return IconButton(
+        icon: Icon(
+          Icons.sports_kabaddi,
+          color: isOngoing ? Colors.red : Colors.white,
+        ),
+        onPressed: () {
+          if (!isOngoing) {
+            challengeController.startChallenge(challenger, opponent);
+
+            // Pianifica il completamento della sfida dopo 7 giorni
+            Future.delayed(const Duration(days: 7), () async {
+              await challengeController.completeChallenge();
+              if (challengeController.isChallengeCompleted()) {
+                // Aggiorna lo stato o notifica l'UI come necessario
+              }
+            });
+          }
+        },
+      );
+    });
   }
 }

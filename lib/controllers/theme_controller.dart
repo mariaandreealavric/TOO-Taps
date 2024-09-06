@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ThemeController extends GetxController {
-  var _boxDecoration = const BoxDecoration(
+  final _boxDecoration = const BoxDecoration(
     color: Colors.black,
   ).obs;
-  var _shadowColor = Colors.blue.withOpacity(0.4).obs;
-  var _currentTheme = ThemeData.light().obs;
-  var _listTileColor = Colors.blue.obs;
+  final _shadowColor = Colors.blue.withOpacity(0.4).obs;
+  final _currentTheme = ThemeData.light().obs;
+  final _listTileColor = Colors.blue.obs;
 
   ThemeData get currentTheme => _currentTheme.value;
   Color get shadowColor => _shadowColor.value;

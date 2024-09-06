@@ -1,7 +1,6 @@
-
-import 'package:fingerfy/Views/profilo.dart';
+import 'package:fingerfy/views/profilo.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart'; // Importa GetX
 
 import '../../controllers/Contatori/touch_counter.dart';
 
@@ -14,7 +13,8 @@ class ProfileButton extends StatefulWidget {
 
 class _ProfileButtonState extends State<ProfileButton> {
   void _incrementTouchCount() {
-    Provider.of<TouchController>(context, listen: false).incrementTouches();
+    final touchController = Get.find<TouchController>(); // Usa GetX per ottenere il controller
+    touchController.incrementTouches(); // Incrementa il conteggio dei tocchi
   }
 
   @override
@@ -27,12 +27,7 @@ class _ProfileButtonState extends State<ProfileButton> {
         onTap: _incrementTouchCount,
         child: IconButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ProfilePage(userID: ''),
-              ),
-            );
+            Get.to(() => const ProfilePage(userID: '')); // Usa GetX per la navigazione
           },
           icon: const Icon(
             Icons.person_3,

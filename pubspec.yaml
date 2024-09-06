@@ -31,7 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
   get: ^4.6.5
-  provider: ^6.1.2
   cupertino_icons: ^1.0.8
   material_color_utilities: 0.8.0
   leak_tracker_flutter_testing: 3.0.3

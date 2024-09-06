@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // Importa GetX
 
 class TouchScrollMonitor extends StatefulWidget {
+  const TouchScrollMonitor({super.key});
+
   @override
   _TouchScrollMonitorState createState() => _TouchScrollMonitorState();
 }

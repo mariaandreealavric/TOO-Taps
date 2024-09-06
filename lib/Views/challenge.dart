@@ -1,4 +1,4 @@
-import 'package:fingerfy/controllers/challenge_provider.dart'; // Assicurati che sia un controller GetX
+import 'package:fingerfy/controllers/challenge_controller.dart'; // Assicurati che sia un controller GetX
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // Importa GetX
 import '../controllers/profile_controller.dart'; // Importa ProfileController
