@@ -1,14 +1,39 @@
+// File: app/build.gradle
+
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
     id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
+    id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
+    id 'com.github.ben-manes.versions' version '0.39.0'
+    id 'com.google.firebase.crashlytics'
+    //id 'com.google.firebase.firebase-perf'//
+    id 'dev.flutter.flutter-gradle-plugin'
 }
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader("UTF-8") { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterSdkPath = localProperties.getProperty('flutter.sdk') ?: System.getenv('FLUTTER_ROOT')
+if (flutterSdkPath == null) {
+    throw new IllegalStateException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+
 
 android {
     namespace = "io.andreealavric.fingerfy"
     compileSdk 34
+
+    viewBinding {
+        enabled = true
+    }
 
     defaultConfig {
         applicationId "io.andreealavric.fingerfy"
@@ -31,28 +56,46 @@ android {
 
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs += ["-Xlint:deprecation", "-Xlint:unchecked"]
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
     }
 
     buildTypes {
         release {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
         }
     }
 }
 
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:33.2.0')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation platform('com.google.firebase:firebase-bom:33.1.2')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.0"
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
-    implementation 'androidx.annotation:annotation:1.8.2'
+    implementation 'androidx.annotation:annotation:1.8.1'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.5'
-    implementation 'androidx.activity:activity-ktx:1.9.2'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
+    implementation 'androidx.activity:activity-ktx:1.9.1'
     implementation 'androidx.core:core-ktx:1.13.1'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.2'
+    implementation "org.jetbrains.kotlinx:kotlinx-parcelize-runtime:1.1.0"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+}
+
+flutter {
+    source = "../.."
 }

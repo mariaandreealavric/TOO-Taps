@@ -1,5 +1,4 @@
 import 'package:fingerfy/Widgets/Navigazione/navigazione.dart';
-import 'package:fingerfy/Widgets/bottoni/bottone_profilo.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart';
@@ -20,8 +19,13 @@ class TapsHomePage extends StatefulWidget {
 class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   bool _isWelcomeMessageShown = false;
-  Map<String, dynamic>? userData;
+  int _selectedIndex = 0; // Indice del segnaposto selezionato
   final Logger _logger = Logger(); // Instance of Logger
+
+  final List<String> _images = [
+    'assets/statua_invalid.png', // Percorso dell'immagine inattiva
+    'assets/statua_attiva.png',  // Percorso dell'immagine attiva
+  ];
 
   @override
   void initState() {
@@ -44,8 +48,8 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
         Get.snackbar(
           'Welcome',
           'Welcome, $userName',
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 1),
         );
       }
     });
@@ -91,15 +95,17 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
         }
       },
       child: Scaffold(
+        extendBodyBehindAppBar: true,  // Estende il corpo dietro l'AppBar per renderla trasparente
         appBar: AppBar(
           backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
           elevation: 0,
+          centerTitle: true,  // Centro il titolo
           title: const Text(
-            'Custom Page',
-            style: TextStyle(color: Colors.white),
+            'Taps', // Scritta in piccolo "Raps"
+            style: TextStyle(fontSize: 16, color: Colors.white,),
           ),
           actions: <Widget>[
-            const ProfileButton(),
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: _signOut,
@@ -112,6 +118,41 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
             builder: (context, constraints) {
               return Column(
                 children: [
+                  const SizedBox(height: 60), // Spazio per l'AppBar trasparente
+                  // Aggiunta dei segnaposto scrollabili
+                  Container(
+                    height: 30,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 8, // 8 segnaposto
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedIndex = index; // Aggiorna l'indice selezionato
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            width: 60, // Dimensione del segnaposto
+                            height: 60, // Dimensione del segnaposto
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  index == _selectedIndex
+                                      ? _images[1] // Immagine attiva
+                                      : _images[0], // Immagine inattiva
+                                ),
+                                fit: BoxFit.contain,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                   Expanded(
                     child: Center(
                       child: Column(
@@ -122,12 +163,8 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
                             style: const TextStyle(color: Colors.white),
                           ),
                           Text(
-                            'Touches: ${profile.touches}', // Usa .value per accedere alle proprietà
+                            'Touches ${profile.touches}', // Usa .value per accedere alle proprietà
                             style: const TextStyle(color: Colors.white, fontSize: 80),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.accessibility_new, color: Colors.white),
-                            onPressed: () {},
                           ),
                         ],
                       ),

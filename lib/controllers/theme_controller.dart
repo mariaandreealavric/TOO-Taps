@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 
 class ThemeController extends GetxController {
   final _boxDecoration = const BoxDecoration(
-    color: Colors.black,
+    color: Color.fromRGBO(0, 0, 0, 0.89), // Nero puro
+
   ).obs;
   final _shadowColor = Colors.blue.withOpacity(0.4).obs;
   final _currentTheme = ThemeData.light().obs;
@@ -19,7 +20,7 @@ class ThemeController extends GetxController {
     if (_currentTheme.value == ThemeData.light()) {
       _currentTheme.value = ThemeData.dark();
       _boxDecoration.value = const BoxDecoration(
-        color: Colors.black,
+        color: Color.fromARGB(29, 29, 27, 0),
         gradient: LinearGradient(
           colors: [Colors.black, Colors.red],
           begin: Alignment.topCenter,
@@ -30,8 +31,9 @@ class ThemeController extends GetxController {
     } else {
       _currentTheme.value = ThemeData.light();
       _boxDecoration.value = const BoxDecoration(
-        color: Colors.black,
-        gradient: LinearGradient(
+        color: Color.fromRGBO(0, 0, 0, 0.89),
+
+      gradient: LinearGradient(
           colors: [Colors.black, Colors.blue],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
