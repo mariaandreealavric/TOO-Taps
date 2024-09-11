@@ -9,7 +9,6 @@ class NavigationButton extends StatefulWidget {
   final bool isSelected;
   final Function onTap;
   final TouchController touchController;
-  final Color circleColor; // Aggiungi un parametro per il colore del cerchio
 
   const NavigationButton({
     super.key,
@@ -19,7 +18,6 @@ class NavigationButton extends StatefulWidget {
     required this.isSelected,
     required this.onTap,
     required this.touchController,
-    required this.circleColor, // Colore del cerchio
   });
 
   @override
@@ -38,18 +36,21 @@ class _NavigationButtonState extends State<NavigationButton> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: widget.circleColor, // Colore del cerchio
-              shape: BoxShape.circle,
+          ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              widget.isSelected ? Colors.blue : Colors.white, // Colore del cerchio
+              BlendMode.srcIn,
+            ),
+            child: Image.asset(
+              'assets/dock_circle.png', // Percorso dell'immagine del cerchio
+              width: 60, // Dimensioni del cerchio
+              height: 60,
             ),
           ),
           Icon(
             widget.icon,
             size: 36.0,
-            color: widget.isSelected ? Colors.black26 : Colors.black, // Cambia colore icona
+            color: widget.isSelected ? Colors.white : Colors.black, // Cambia colore icona
           ),
         ],
       ),
