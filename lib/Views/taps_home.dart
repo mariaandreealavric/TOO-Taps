@@ -103,7 +103,8 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
           centerTitle: true,  // Centro il titolo
           title: const Text(
             'Taps', // Scritta in piccolo "Raps"
-            style: TextStyle(fontSize: 16, color: Colors.white,),
+            style: TextStyle(fontSize: 16, color: Colors.white,fontFamily: 'KeplerStd',
+            fontStyle: FontStyle.italic, fontWeight: FontWeight.normal),
           ),
           actions: <Widget>[
             IconButton(
