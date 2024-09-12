@@ -35,7 +35,7 @@ class _NavigationState extends State<Navigation> {
     double width = MediaQuery.of(context).size.width;
 
     // Calcolo della posizione orizzontale dinamica per il cerchio e la dockbar
-    double dockBarWidth = width * 1.5; // Larghezza estesa della dockbar
+    double dockBarWidth = width * 1.6; // Larghezza estesa della dockbar
     double circlePosition = width * positions[_selectedIndex]; // Posizione orizzontale del cerchio
 
     return Positioned(
@@ -43,15 +43,16 @@ class _NavigationState extends State<Navigation> {
       left: 0,
       right: 0,
       child: Stack(
-        alignment: Alignment.bottomCenter,
+        alignment: Alignment.bottomLeft,
         children: [
           // Dockbar e dock circle si muovono insieme
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300), // Durata dell'animazione
-            left: circlePosition - (dockBarWidth / 4), // Centra la dockbar rispetto all'icona selezionata
+            left: circlePosition - (dockBarWidth / 2.2), // Centra la dockbar rispetto all'icona selezionata
             bottom: 0, // Posizione della dockbar
             child: Stack(
               alignment: Alignment.center,
+              clipBehavior: Clip.none, // Permette al cerchio di essere visibile anche se esce dai limiti
               children: [
                 Image.asset(
                   'assets/dockbar.png', // Immagine della dockbar
@@ -59,7 +60,7 @@ class _NavigationState extends State<Navigation> {
                   fit: BoxFit.fitWidth,
                 ),
                 Positioned(
-                  top: -30, // Posiziona il cerchio leggermente sopra la dockbar
+                  top: -3, // Posiziona il cerchio leggermente sopra la dockbar
                   left: (dockBarWidth / 2) - 30, // Centra il cerchio rispetto alla dockbar
                   child: Image.asset(
                     'assets/dock_circle.png', // Immagine del cerchio
@@ -72,7 +73,7 @@ class _NavigationState extends State<Navigation> {
           ),
           // Icone dei pulsanti di navigazione
           SizedBox(
-            height: 80, // Assicurati che la Dock Bar non copra il resto
+            height: 104, // Assicurati che la Dock Bar non copra il resto
             width: double.infinity,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
