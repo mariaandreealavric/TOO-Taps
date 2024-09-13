@@ -101,18 +101,24 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
           shadowColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,  // Centro il titolo
-          title: const Text(
-            'Taps', // Scritta in piccolo "Raps"
-            style: TextStyle(fontSize: 16, color: Colors.white,fontFamily: 'KeplerStd',
-            fontStyle: FontStyle.italic, fontWeight: FontWeight.normal),
+          title: const Text( // Usa il parametro "title" dell'AppBar
+            'Taps', // Scritta in piccolo "Taps"
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+              fontFamily: 'KeplerStd', // Nome della famiglia del font come specificato in pubspec.yaml
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.normal,
+            ),
           ),
-          actions: <Widget>[
+          actions: const <Widget>[
             IconButton(
-              icon: const Icon(Icons.logout),
+              icon: Icon(Icons.logout),
               onPressed: null,
             ),
           ],
         ),
+
         body: Container(
           decoration: themeController.boxDecoration, // Usa il GetX controller per la gestione del tema
           child: LayoutBuilder(
@@ -155,22 +161,41 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
                     ),
                   ),
                   Expanded(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Welcome, ${profile.displayName}', // Usa .value per accedere alle proprietà
-                            style: const TextStyle(color: Colors.white),
+                    child: Align(
+                      alignment: Alignment.bottomRight, // Fissa il contenuto in basso a destra
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0), // Aggiunge un po' di padding se necessario
+                        child: RichText(
+                          textAlign: TextAlign.right, // Allinea il testo a destra
+                          text: TextSpan(
+                            children: [
+                              const TextSpan(
+                                text: 'Taps', // Testo prima di andare a capo
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 80,
+                                  fontFamily: 'KeplerStd', // Nome della famiglia del font come specificato in pubspec.yaml
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                              TextSpan(
+                                text: '\n${profile.touches}', // A capo con il numero dei tocchi
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 80,
+                                  fontFamily: 'PlusJakartaSans', // Nome della famiglia del font come specificato in pubspec.yaml
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'Touches ${profile.touches}', // Usa .value per accedere alle proprietà
-                            style: const TextStyle(color: Colors.white, fontSize: 80),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
+
                   Container(
                     width: constraints.maxWidth,
                     color: Colors.transparent,

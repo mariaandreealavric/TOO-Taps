@@ -25,6 +25,13 @@ class NavigationButton extends StatefulWidget {
 }
 
 class _NavigationButtonState extends State<NavigationButton> {
+  // Definisce i colori per ogni stato selezionato
+  final List<Color> _colors = [
+    Color(0xFFFFE500),  // Colore esadecimale per la prima icona (giallo)
+    Color(0xFF007BFF),  // Colore esadecimale per la seconda icona (blu)
+    Color(0xFFFF4343),  // Colore esadecimale per la terza icona (rosso)
+  ];
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -36,15 +43,14 @@ class _NavigationButtonState extends State<NavigationButton> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              widget.isSelected ? Colors.blue : Colors.white, // Colore del cerchio
-              BlendMode.srcIn,
-            ),
-            child: Image.asset(
-              'assets/dock_circle.png', // Percorso dell'immagine del cerchio
-              width: 60, // Dimensioni del cerchio
-              height: 60,
+          // Usa AnimatedContainer per animare il colore di sfondo
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300), // Durata dell'animazione del colore
+            width: 60, // Dimensioni del cerchio
+            height: 60,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: widget.isSelected ? _colors[widget.index] : Colors.white, // Colore animato del cerchio
             ),
           ),
           Icon(

@@ -18,9 +18,9 @@ class _NavigationState extends State<Navigation> {
 
   // Definisce le posizioni orizzontali relative per le icone
   final List<double> positions = [
-    0.1,  // Posizione del primo pulsante
+    0.1, // Posizione del primo pulsante
     0.45, // Posizione del secondo pulsante (centro)
-    0.8,  // Posizione del terzo pulsante
+    0.8, // Posizione del terzo pulsante
   ];
 
   void _onItemTapped(int index) {
@@ -32,11 +32,15 @@ class _NavigationState extends State<Navigation> {
   @override
   Widget build(BuildContext context) {
     final touchController = Get.put(TouchController(widget.profile));
-    double width = MediaQuery.of(context).size.width;
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     // Calcolo della posizione orizzontale dinamica per il cerchio e la dockbar
     double dockBarWidth = width * 1.6; // Larghezza estesa della dockbar
-    double circlePosition = width * positions[_selectedIndex]; // Posizione orizzontale del cerchio
+    double circlePosition = width *
+        positions[_selectedIndex]; // Posizione orizzontale del cerchio
 
     return Positioned(
       bottom: 0, // Posiziona la barra di navigazione in basso
@@ -47,12 +51,16 @@ class _NavigationState extends State<Navigation> {
         children: [
           // Dockbar e dock circle si muovono insieme
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 300), // Durata dell'animazione
-            left: circlePosition - (dockBarWidth / 2.2), // Centra la dockbar rispetto all'icona selezionata
-            bottom: 0, // Posizione della dockbar
+            duration: const Duration(milliseconds: 300),
+            // Durata dell'animazione
+            left: circlePosition - (dockBarWidth / 2.2),
+            // Centra la dockbar rispetto all'icona selezionata
+            bottom: 0,
+            // Posizione della dockbar
             child: Stack(
               alignment: Alignment.center,
-              clipBehavior: Clip.none, // Permette al cerchio di essere visibile anche se esce dai limiti
+              clipBehavior: Clip.none,
+              // Permette al cerchio di essere visibile anche se esce dai limiti
               children: [
                 Image.asset(
                   'assets/dockbar.png', // Immagine della dockbar
@@ -60,8 +68,10 @@ class _NavigationState extends State<Navigation> {
                   fit: BoxFit.fitWidth,
                 ),
                 Positioned(
-                  top: -3, // Posiziona il cerchio leggermente sopra la dockbar
-                  left: (dockBarWidth / 2) - 30, // Centra il cerchio rispetto alla dockbar
+                  top: -3,
+                  // Posiziona il cerchio leggermente sopra la dockbar
+                  left: (dockBarWidth / 2) - 30,
+                  // Centra il cerchio rispetto alla dockbar
                   child: Image.asset(
                     'assets/dock_circle.png', // Immagine del cerchio
                     width: 60, // Larghezza del cerchio
@@ -79,23 +89,27 @@ class _NavigationState extends State<Navigation> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(
-                  icon: Icons.broken_image_outlined,
+                  inactiveImage: 'assets/sezione_tap.png',
+                  activeImage: 'assets/sezione_tap_active.png',
                   index: 0,
                   touchController: touchController,
                 ),
                 _buildNavItem(
-                  icon: Icons.rocket,
+                  inactiveImage: 'assets/sezione_scroll.png',
+                  activeImage: 'assets/sezione_scroll_active.png',
                   index: 1,
                   touchController: touchController,
                 ),
                 _buildNavItem(
-                  icon: Icons.star,
+                  inactiveImage: 'assets/sezione_pod.png',
+                  activeImage: 'assets/sezione_pod_active.png',
                   index: 2,
                   touchController: touchController,
                 ),
               ],
             ),
           ),
+
         ],
       ),
     );
@@ -103,7 +117,8 @@ class _NavigationState extends State<Navigation> {
 
   // Funzione per costruire gli elementi della navigazione
   Widget _buildNavItem({
-    required IconData icon,
+    required String inactiveImage,
+    required String activeImage,
     required int index,
     required TouchController touchController,
   }) {
@@ -122,11 +137,13 @@ class _NavigationState extends State<Navigation> {
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              transform: Matrix4.translationValues(0, _selectedIndex == index ? -10 : 0, 0),
-              child: Icon(
-                icon,
-                size: 36.0,
-                color: _selectedIndex == index ? Colors.blue : Colors.black, // Cambia colore icona
+              transform: Matrix4.translationValues(
+                  0, _selectedIndex == index ? -10 : 0, 0),
+              child: Image.asset(
+                _selectedIndex == index ? activeImage : inactiveImage,
+                // Scegli l'immagine in base allo stato
+                width: 36.0, // Regola la dimensione dell'immagine
+                height: 36.0,
               ),
             ),
           ],
