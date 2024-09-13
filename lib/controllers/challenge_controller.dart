@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../services/challenge_service.dart';
 
 class ChallengeController extends GetxController {
-  final ChallengeService _challengeService = ChallengeService();
+ // final ChallengeService _challengeService = ChallengeService();
   DateTime? _startTime;
   ProfileModel? _challenger;
   ProfileModel? _opponent;
@@ -18,12 +18,12 @@ class ChallengeController extends GetxController {
     _challenger = challenger;
     _opponent = opponent;
     _startTime = DateTime.now();
-    _challengeService.startChallenge(challenger, opponent);
+ //   _challengeService.startChallenge(challenger, opponent);
     isChallengeOngoing.value = true; // Aggiorna lo stato reattivo
   }
 
   Future<void> completeChallenge() async {
-    await _challengeService.completeChallenge();
+  //  await _challengeService.completeChallenge();
     _challenger = null;
     _opponent = null;
     _startTime = null;

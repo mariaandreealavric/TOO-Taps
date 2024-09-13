@@ -1,5 +1,5 @@
 // controllers/touch_controller.dart
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fingerfy/models/profile_model.dart';
 
 import 'package:get/get.dart';
@@ -21,16 +21,16 @@ class TouchController extends GetxController {
   void incrementTouches() {
     touches.value++;
     userProfile.touches = touches.value; // Aggiorna il modello
-    _updateProfileData(); // Aggiorna il database
+    //_updateProfileData(); // Aggiorna il database
   }
 
-  Future<void> _updateProfileData() async {
-    try {
-      await FirebaseFirestore.instance.collection('users').doc(userProfile.uid).update({
-        'touches': userProfile.touches,
-      });
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to update touches: $e');
-    }
-  }
+ // Future<void> _updateProfileData() async {
+  //  try {
+   //   await FirebaseFirestore.instance.collection('users').doc(userProfile.uid).update({
+   //     'touches': userProfile.touches,
+   //   });
+  //  } catch (e) {
+ //     Get.snackbar('Error', 'Failed to update touches: $e');
+ //   }
+ // }
 }

@@ -1,6 +1,6 @@
 import 'package:fingerfy/Widgets/Navigazione/navigazione.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart';
 import 'package:get/get.dart';
 
@@ -55,12 +55,12 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
     });
   }
 
-  Future<void> _signOut() async {
-    await FirebaseAuth.instance.signOut();
-    if (mounted) {
-      Get.offAllNamed('/'); // Use GetX for navigation after sign out
-    }
-  }
+ // Future<void> _signOut() async {
+  //  await FirebaseAuth.instance.signOut();
+  //  if (mounted) {
+  //    Get.offAllNamed('/'); // Use GetX for navigation after sign out
+ //   }
+ // }
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +109,7 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.logout),
-              onPressed: _signOut,
+              onPressed: null,
             ),
           ],
         ),
@@ -121,7 +121,7 @@ class TapsHomePageState extends State<TapsHomePage> with SingleTickerProviderSta
                 children: [
                   const SizedBox(height: 60), // Spazio per l'AppBar trasparente
                   // Aggiunta dei segnaposto scrollabili
-                  Container(
+                  SizedBox(
                     height: 30,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,

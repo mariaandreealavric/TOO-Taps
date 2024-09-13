@@ -1,14 +1,16 @@
+
+/*
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fingerfy/models/profile_model.dart';
 
 import 'package:fingerfy/Services/shared_preferences.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 
 
 class ChallengeService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+//  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+ // final FirebaseAuth _auth = FirebaseAuth.instance;
   final SharedPreferencesManager _prefsManager = SharedPreferencesManager();
 
   Future<void> startChallenge(ProfileModel challenger, ProfileModel opponent) async {
@@ -18,8 +20,8 @@ class ChallengeService {
     final challenge = {
       'challengerUid': challenger.uid,
       'opponentUid': opponent.uid,
-      'startDate': Timestamp.fromDate(startTime),
-      'endDate': Timestamp.fromDate(startTime.add(const Duration(days: 7))),
+    //  'startDate': Timestamp.fromDate(startTime),
+   //   'endDate': Timestamp.fromDate(startTime.add(const Duration(days: 7))),
       'challengerTouches': 0,
       'challengerScrolls': 0,
       'opponentTouches': 0,
@@ -27,7 +29,7 @@ class ChallengeService {
       'winner': null,
     };
 
-    await _firestore.collection('challenges').add(challenge);
+  //  await _firestore.collection('challenges').add(challenge);
   }
 
   Future<void> completeChallenge() async {
@@ -41,47 +43,47 @@ class ChallengeService {
   }
 
   Future<void> sendChallenge(String opponentUid) async {
-    final user = _auth.currentUser;
-    if (user != null) {
+ //   final user = _auth.currentUser;
+//    if (user != null) {
       final now = DateTime.now();
       final challenge = {
-        'challengerUid': user.uid,
+      //  'challengerUid': user.uid,
         'opponentUid': opponentUid,
-        'startDate': Timestamp.fromDate(now),
-        'endDate': Timestamp.fromDate(now.add(const Duration(days: 7))),
+      //  'startDate': Timestamp.fromDate(now),
+     //   'endDate': Timestamp.fromDate(now.add(const Duration(days: 7))),
         'challengerTouches': 0,
         'challengerScrolls': 0,
         'opponentTouches': 0,
         'opponentScrolls': 0,
         'winner': null,
       };
-      await _firestore.collection('challenges').add(challenge);
+  //    await _firestore.collection('challenges').add(challenge);
     }
   }
 
   Future<void> updateChallengeData(String challengeId, int touches, int scrolls, bool isChallenger) async {
-    final challengeRef = _firestore.collection('challenges').doc(challengeId);
-    final challenge = await challengeRef.get();
-    if (challenge.exists) {
-      final data = challenge.data()!;
-      if (isChallenger) {
-        data['challengerTouches'] = touches;
-        data['challengerScrolls'] = scrolls;
-      } else {
-        data['opponentTouches'] = touches;
-        data['opponentScrolls'] = scrolls;
+ //   final challengeRef = _firestore.collection('challenges').doc(challengeId);
+  //  final challenge = await challengeRef.get();
+  //  if (challenge.exists) {
+   //   final data = challenge.data()!;
+   //   if (isChallenger) {
+   //     data['challengerTouches'] = touches;
+    //    data['challengerScrolls'] = scrolls;
+   //   } else {
+    //    data['opponentTouches'] = touches;
+    //    data['opponentScrolls'] = scrolls;
       }
-      await challengeRef.update(data);
+   //   await challengeRef.update(data);
     }
   }
 
   Future<void> checkChallengeWinner(String challengeId) async {
-    final challengeRef = _firestore.collection('challenges').doc(challengeId);
-    final challenge = await challengeRef.get();
-    if (challenge.exists) {
-      final data = challenge.data()!;
+ //   final challengeRef = _firestore.collection('challenges').doc(challengeId);
+  //  final challenge = await challengeRef.get();
+  //  if (challenge.exists) {
+  //    final data = challenge.data()!;
       final now = DateTime.now();
-      final endDate = (data['endDate'] as Timestamp).toDate();
+   //   final endDate = (data['endDate'] as Timestamp).toDate();
 
       if (now.isAfter(endDate)) {
         final challengerTouches = data['challengerTouches'];
@@ -99,9 +101,9 @@ class ChallengeService {
           winner = data['opponentUid'];
         }
 
-        await challengeRef.update({'winner': winner});
+      //  await challengeRef.update({'winner': winner});
 
-        final userRef = _firestore.collection('users').doc(winner);
+      //  final userRef = _firestore.collection('users').doc(winner);
         final user = await userRef.get();
         if (user.exists) {
           final userData = user.data()!;
@@ -113,3 +115,4 @@ class ChallengeService {
     }
   }
 }
+*/
