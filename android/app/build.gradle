@@ -1,11 +1,10 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'  // Include solo una volta il plugin Kotlin
-    id 'kotlin-parcelize'              // Plugin Parcelize incluso una sola volta
-    id 'com.google.gms.google-services'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'  // Plugin Google Services - dipendente da Firebase
     id 'com.github.ben-manes.versions' version '0.39.0'
-    id 'com.google.firebase.crashlytics'
-    // id 'com.google.firebase.firebase-perf'
+    // id 'com.google.firebase.crashlytics'  // Commentato: Firebase Crashlytics
+    // id 'com.google.firebase.firebase-perf'  // Commentato: Firebase Performance
     id 'dev.flutter.flutter-gradle-plugin'
 }
 
@@ -39,10 +38,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures {
-        viewBinding true
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -54,7 +49,7 @@ android {
         freeCompilerArgs += ["-Xlint:deprecation", "-Xlint:unchecked"]
     }
 
-    lintOptions {
+    lint {
         disable 'InvalidPackage'
     }
 
@@ -63,23 +58,16 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
-        }
-    }
-
-    sourceSets {
-        main {
-            java.srcDirs = ['src/main/java']
-            res.srcDirs = ['src/main/res']
+            // Define una configurazione di firma di release qui
         }
     }
 }
 
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:33.3.0')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"  // Uso versione stabile di Kotlin
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-auth'
+    // implementation platform('com.google.firebase:firebase-bom:33.3.0')  // Commentato: BOM di Firebase
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+    // implementation 'com.google.firebase:firebase-analytics'  // Commentato: Firebase Analytics
+    // implementation 'com.google.firebase:firebase-auth'  // Commentato: Firebase Auth
     implementation 'androidx.annotation:annotation:1.8.2'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
@@ -96,5 +84,5 @@ flutter {
 
 repositories {
     google()
-    mavenCentral()  // Aggiungo repository Maven Central
+    mavenCentral()
 }

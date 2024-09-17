@@ -1,10 +1,8 @@
-// File: build.gradle (root project)
-
 group 'io.flutter.plugins.firebase.auth'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '2.0.0'
+    ext.kotlin_version = '1.9.0'  // Usa una versione stabile di Kotlin
     repositories {
         google()
         mavenCentral()
@@ -12,9 +10,9 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.4.2'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.2'
-        classpath 'com.google.firebase:perf-plugin:1.4.2'
+        classpath 'com.google.gms:google-services:4.3.15'  // Versione aggiornata di Google Services Plugin
+        // classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.2'  // Commentato: Firebase Crashlytics
+        // classpath 'com.google.firebase:perf-plugin:1.4.2'  // Commentato: Firebase Performance Plugin
     }
 }
 
@@ -25,14 +23,13 @@ allprojects {
     }
 }
 
-rootProject.layout.buildDirectory = file("../build")
-subprojects {
-    project.layout.buildDirectory = file("${rootProject.layout.buildDirectory}/${project.name}")
-}
-subprojects {
-    project.evaluationDependsOn(":app")
-}
+// Commentato per evitare problemi di percorso
+// rootProject.layout.buildDirectory = file("../build")
+// subprojects {
+//     project.layout.buildDirectory = file("${rootProject.layout.buildDirectory}/${project.name}")
+//     project.evaluationDependsOn(":app")
+// }
 
 tasks.register("clean", Delete) {
-    delete rootProject.layout.buildDirectory
+    delete rootProject.buildDir  // Usa il buildDir predefinito di Gradle
 }
